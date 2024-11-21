@@ -8,8 +8,8 @@
 
 ## FrontEnd
 
-https://img.shields.io/badge/<img src="https://img.shields.io/badge/React-61DAFB?style=flat&logo=React&logoColor=white"/>
-https://img.shields.io/badge/<img src="https://img.shields.io/badge/MUI-007FFF?style=flat&logo=MUI&logoColor=white"/>
+https://img.shields.io/badge/</img src="https://img.shields.io/badge/React-61DAFB?style=flat&logo=React&logoColor=white"/>
+https://img.shields.io/badge/</img src="https://img.shields.io/badge/MUI-007FFF?style=flat&logo=MUI&logoColor=white"/>
 
 ### Member
 
@@ -19,8 +19,8 @@ https://img.shields.io/badge/<img src="https://img.shields.io/badge/MUI-007FFF?
 
 ## BackEnd
 
-https://img.shields.io/badge/<img src="https://img.shields.io/badge/Flask-000000?style=flat&logo=Flask&logoColor=white"/>
-https://img.shields.io/badge/<img src="https://img.shields.io/badge/C-A8B9CC?style=flat&logo=C&logoColor=white"/>
+https://img.shields.io/badge/</img src="https://img.shields.io/badge/Flask-000000?style=flat&logo=Flask&logoColor=white"/>
+https://img.shields.io/badge/</img src="https://img.shields.io/badge/C-A8B9CC?style=flat&logo=C&logoColor=white"/>
 
 ### Member
 
