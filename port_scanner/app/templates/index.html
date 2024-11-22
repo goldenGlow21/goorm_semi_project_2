@@ -1,12 +1,28 @@
-{% extends "base.html" %}
-
-{% block content %}
-<h2>Welcome to the Port Scanner</h2>
-<form action="/scan" method="POST">
+<form id="scanForm">
     <label for="ip">Target IP:</label>
     <input type="text" id="ip" name="ip" required>
     <label for="ports">Ports (comma-separated):</label>
     <input type="text" id="ports" name="ports" required>
-    <button type="submit">Scan</button>
+    <button type="button" onclick="submitForm()">Scan</button>
 </form>
-{% endblock %}
+
+<script>
+function submitForm() {
+    const ip = document.getElementById('ip').value;
+    const ports = document.getElementById('ports').value.split(',').map(port => port.trim());
+
+    fetch('/scan', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ ip, ports })
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log('Scan Results:', data);
+        // 결과를 페이지에 표시하거나 처리하는 코드를 추가할 수 있습니다.
+    })
+    .catch(error => console.error('Error:', error));
+}
+</script>

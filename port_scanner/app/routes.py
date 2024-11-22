@@ -11,10 +11,11 @@ def home():
 def scan():
     data = request.get_json()
     target_ip = data.get("ip")
-    ports = data.get("ports", [])
+    ports = data.get("ports")
 
     if not target_ip or not ports:
-        return jsonify({"error": "IP address and port list are required"}), 400
+        return jsonify({"error": "IP address and ports are required"}), 400
 
+    # 스캔 수행
     result = scan_ports(target_ip, ports)
     return jsonify(result)

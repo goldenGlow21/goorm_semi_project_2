@@ -11,6 +11,9 @@ def udp_scan(ip: str, port: int):
 
 def scan_ports(ip: str, ports: list):
     results = {}
+    # 문자열을 정수로 변환
+    ports = [int(port) for port in ports]
+
     for port in ports:
         tcp_scan(ip, port)
         udp_scan(ip, port)
