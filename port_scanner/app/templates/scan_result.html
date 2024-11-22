@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Scan Results</h2>
+<ul>
+    {% for port, status in results.items() %}
+        <li>Port {{ port }}: {{ status }}</li>
+    {% endfor %}
+</ul>
+<a href="/">Back to Home</a>
+{% endblock %}

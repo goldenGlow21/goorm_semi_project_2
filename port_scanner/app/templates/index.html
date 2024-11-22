@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Welcome to the Port Scanner</h2>
+<form action="/scan" method="POST">
+    <label for="ip">Target IP:</label>
+    <input type="text" id="ip" name="ip" required>
+    <label for="ports">Ports (comma-separated):</label>
+    <input type="text" id="ports" name="ports" required>
+    <button type="submit">Scan</button>
+</form>
+{% endblock %}
