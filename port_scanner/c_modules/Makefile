@@ -1,13 +1,14 @@
 CC = gcc
 CFLAGS = -shared -fPIC
 TARGET = libscan.so
-SRC = tcp_connect.c tcp_syn.c udp_scan.c xmas_scan.c ack_scan.c null_scan.c
+OBJS = tcp_connect.c tcp_syn.c udp_scan.c xmas_scan.c ack_scan.c null_scan.c checksum.c
 
 all:
-	$(CC) $(CFLAGS) -o $(TARGET) $(SRC)
+	$(CC) $(CFLAGS) -o $(TARGET) $(OBJS)
 
 clean:
 	rm -f $(TARGET)
+
 
 #============================================================================
 # 모든 C 파일을 컴파일하여 공유 라이브러리 생성

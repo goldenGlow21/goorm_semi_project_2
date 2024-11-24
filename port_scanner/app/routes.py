@@ -1,5 +1,6 @@
 from flask import Blueprint, request, jsonify, render_template
 from app.scanner import scan_ports
+from datetime import datetime
 
 bp = Blueprint("main", __name__)
 
@@ -12,16 +13,30 @@ def home():
 def scan():
     data = request.get_json()
     target_ip = data.get("ip")
-    ports = data.get("ports")
-    scan_type = data.get("scan_type", "tcp_connect")  # 기본값: TCP Connect - 필요시 변경
+    scan_type = data.get("scan_type")
 
-    # 잘못된 scan_type 요청 시 400 에러 반환
-    if not target_ip or not ports:
-        return jsonify({"error": "IP address and ports are required"}), 400
+    # 유효성 검사
+    if not target_ip or not isinstance(target_ip, str):
+        return jsonify({"error": "Invalid or missing IP address"}), 400
+    if scan_type not in ["tcp_connect", "tcp_syn", "udp", "xmas", "null", "ack"]:
+        return jsonify({"error": f"Unsupported scan type: {scan_type}"}), 400
 
-    if scan_type not in ["tcp_connect", "tcp_syn", "udp", "xmas", "ack", "null"]:
-        return jsonify({"error": f"Invalid scan type: {scan_type}"}), 400
+    # 전체 포트 스캔 (1~65535)
+    ports = range(1, 65536)
 
-    # 스캔 실행
-    result = scan_ports(target_ip, ports, scan_type)
-    return jsonify(result)
+    # 스캔 수행
+    results = scan_ports(target_ip, ports, scan_type)
+
+    # 응답 생성
+    response = {
+        "ip": target_ip,
+        "results": {
+            port: {
+                "protocol": scan_type,
+                "status": results[port]
+            } for port in results
+        },
+        "scan_type": scan_type,
+        "scan_time": datetime.utcnow().isoformat() + "Z"
+    }
+    return jsonify(response)
