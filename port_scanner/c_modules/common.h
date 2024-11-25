@@ -17,6 +17,8 @@
 #define SYN 1
 #define FIN 2
 #define ACK 3
+#define XMAS 4
+
 // 패킷 사이즈
 #define PACKET_SIZE 1024
 // 스레드 개수
