@@ -62,6 +62,11 @@ void create_raw_packet(char *packet, const char *src_ip, int src_port, const cha
         tcph->fin = 1;
     else if (flag == ACK)
         tcph->ack = 1;
+    else if (flag == XMAS) {
+        tcph->fin = 1;
+        tcph->psh = 1;
+        tcph->urg = 1;
+    }
     tcph->source = htons(src_port);
     tcph->dest = htons(dst_port);
     tcph->seq = htonl(0);
