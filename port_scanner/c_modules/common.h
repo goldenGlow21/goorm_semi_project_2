@@ -11,6 +11,7 @@
 #include <netinet/tcp.h>
 #include <unistd.h>
 #include <time.h>
+#include "thpool.h"
 
 // TCP 플래그 정의
 #define SYN 1
@@ -18,7 +19,8 @@
 #define ACK 3
 // 패킷 사이즈
 #define PACKET_SIZE 1024
-
+// 스레드 개수
+#define MAX_THREADS 16
 // 공용 함수 선언
 
 /**
