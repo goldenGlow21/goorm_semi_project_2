@@ -15,6 +15,7 @@
 // TCP 플래그 정의
 #define SYN 1
 #define FIN 2
+#define NULL 3
 // 패킷 사이즈
 #define PACKET_SIZE 1024
 
@@ -67,5 +68,23 @@ void send_raw_packet(int sockfd, char *packet, const char *dst_ip, int dst_port)
  * @return RST/ACK 플래그가 설정되어 있는 경우 1, 그렇지 않으면 0
  */
 int is_rst_ack(struct iphdr *iph, struct tcphdr *tcph);
+
+/**
+ * TCP RST 확인 함수
+ * @param iph 수신된 IP 헤더
+ * @param tcph 수신된 TCP 헤더
+ * @return RST 플래그가 설정되어 있는 경우 1, 그렇지 않으면 0
+ */
+
+int is_rst(struct iphdr *iph, struct tcphdr *tcph);
+
+/**
+ * TCP fin/null/xmas recv 확인 함수
+ * @param sockfd 수신에 사용할 소켓 디스크립터
+ * @param src_port 수신된 수신한 포트
+ * @return time_limit 타임아웃 설정
+ */
+
+void receive_fin_null_xmas_response(int sockfd, int src_port, int time_limit);
 
 #endif // COMMON_H
