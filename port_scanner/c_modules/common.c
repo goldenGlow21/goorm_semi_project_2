@@ -11,7 +11,6 @@
 #include <netinet/tcp.h>
 #include <unistd.h>
 #include <time.h>
-#include <checksum.h>
 #define SYN 1
 #define FIN 2
 
