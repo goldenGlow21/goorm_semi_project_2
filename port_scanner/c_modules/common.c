@@ -115,5 +115,9 @@ void send_packet(int sockfd, char *packet, const char *dst_ip, int dst_port) {
         exit(1);
     }
 
-    printf("SYN 패킷 보냄 %s:%d\n", dst_ip, dst_port);
+    printf("패킷 보냄 %s:%d\n", dst_ip, dst_port);
+}
+
+int is_rst_ack(struct iphdr *iph, struct tcphdr *tcph) {
+    return (iph->protocol == IPPROTO_TCP && tcph->rst == 1 && tcph->ack == 1);
 }
