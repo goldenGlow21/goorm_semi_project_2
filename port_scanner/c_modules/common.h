@@ -39,7 +39,7 @@ unsigned short checksum(void *b, int len);
 void set_socket_options(int sockfd);
 
 /**
- * 패킷 생성 함수
+ * 로우 패킷 생성 함수
  * @param packet 생성된 패킷이 저장될 버퍼
  * @param src_ip 출발 IP 주소
  * @param src_port 출발 포트
@@ -47,7 +47,7 @@ void set_socket_options(int sockfd);
  * @param dst_port 대상 포트
  * @param flag TCP 플래그 (SYN, FIN 등)
  */
-void create_packet(char *packet, const char *src_ip, int src_port, const char *dst_ip, int dst_port, int flag);
+void create_raw_packet(char *packet, const char *src_ip, int src_port, const char *dst_ip, int dst_port, int flag);
 
 /**
  * 패킷 전송 함수
@@ -56,7 +56,7 @@ void create_packet(char *packet, const char *src_ip, int src_port, const char *d
  * @param dst_ip 대상 IP 주소
  * @param dst_port 대상 포트
  */
-void send_packet(int sockfd, char *packet, const char *dst_ip, int dst_port);
+void send_raw_packet(int sockfd, char *packet, const char *dst_ip, int dst_port);
 
 /**
  * TCP RST/ACK 확인 함수

@@ -37,7 +37,7 @@ void set_socket_options(int sockfd) {
 }
 
 // 패킷 생성 함수
-void create_packet(char *packet, const char *src_ip, int src_port, const char *dst_ip, int dst_port, int flag) {
+void create_raw_packet(char *packet, const char *src_ip, int src_port, const char *dst_ip, int dst_port, int flag) {
     struct iphdr *iph = (struct iphdr *)packet;
     struct tcphdr *tcph = (struct tcphdr *)(packet + sizeof(struct iphdr));
 
@@ -88,7 +88,7 @@ void create_packet(char *packet, const char *src_ip, int src_port, const char *d
 }
 
 // 패킷 전송 함수
-void send_packet(int sockfd, char *packet, const char *dst_ip, int dst_port) {
+void send_raw_packet(int sockfd, char *packet, const char *dst_ip, int dst_port) {
     struct sockaddr_in dest;
     dest.sin_family = AF_INET;
     dest.sin_port = htons(dst_port);
