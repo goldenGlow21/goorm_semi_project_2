@@ -1,5 +1,7 @@
 #include "common.h"
 
+#include <stdbool.h>
+
 // 로우 소켓 생성 함수
 int create_raw_socket() {
     int sockfd = socket(AF_INET, SOCK_RAW, IPPROTO_TCP);
@@ -58,6 +60,8 @@ void create_raw_packet(char *packet, const char *src_ip, int src_port, const cha
         tcph->syn = 1;
     else if (flag == FIN)
         tcph->fin = 1;
+    else if (flag == ACK)
+        tcph->ack = 1;
     tcph->source = htons(src_port);
     tcph->dest = htons(dst_port);
     tcph->seq = htonl(0);
