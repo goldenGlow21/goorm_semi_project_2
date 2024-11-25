@@ -1,7 +1,4 @@
-//
-// Created by yangik11 on 24. 11. 25.
-//
-#include <common.h>
+#include "common.h"
 
 
 void receive_fin_response(int sockfd, int src_port, int time_limit)

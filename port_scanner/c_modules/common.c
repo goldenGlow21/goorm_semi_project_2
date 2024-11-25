@@ -1,19 +1,4 @@
-//
-// Created by yangik11 on 24. 11. 25.
-//
-#include <errno.h>
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-#include <sys/socket.h>
-#include <arpa/inet.h>
-#include <netinet/ip.h>
-#include <netinet/tcp.h>
-#include <unistd.h>
-#include <time.h>
-#include <checksum.h>
-#define SYN 1
-#define FIN 2
+#include "common.h"
 
 // 로우 소켓 생성 함수
 int create_raw_socket() {

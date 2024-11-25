@@ -1,8 +1,16 @@
 #ifndef COMMON_H
 #define COMMON_H
 
+#include <errno.h>
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <sys/socket.h>
+#include <arpa/inet.h>
 #include <netinet/ip.h>
 #include <netinet/tcp.h>
+#include <unistd.h>
+#include <time.h>
 
 // TCP 플래그 정의
 #define SYN 1
