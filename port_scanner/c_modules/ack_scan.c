@@ -19,7 +19,7 @@ void receive_ack_response(int sockfd, int src_port, int time_limit)
     ssize_t data_size = recvfrom(sockfd, recv_buffer, sizeof(recv_buffer), 0, (struct sockaddr *)&src_addr, &addr_len);
     if (data_size == -1) {
         if (errno == EAGAIN || errno == ECONNREFUSED)
-            perror("포트 닫힘(타임 아웃)");
+            perror("방화벽 설정됨(타임 아웃 또는 ICMP 에러)");
         else
             perror("ack recvfrom 에러");
         return;
@@ -29,7 +29,7 @@ void receive_ack_response(int sockfd, int src_port, int time_limit)
     struct tcphdr *recv_tcph = (struct tcphdr *)(recv_buffer + (recv_iph->ihl * 4));
 
     if (is_rst(recv_iph, recv_tcph) && ntohs(recv_tcph->dest) == src_port) {
-        printf("포트 열림(RST 패킷 받음 %s:%d)\n", inet_ntoa(*(struct in_addr *)&recv_iph->saddr), ntohs(recv_tcph->source));
+        printf("방화벽 필터링 안됨(RST 패킷 받음 %s:%d)\n", inet_ntoa(*(struct in_addr *)&recv_iph->saddr), ntohs(recv_tcph->source));
     }
 
 
