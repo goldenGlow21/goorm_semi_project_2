@@ -8,6 +8,11 @@
 #include <unistd.h>
 #include <errno.h>
 
+// RST 패킷 확인 함수
+int is_rst(struct iphdr *iph, struct tcphdr *tcph) {
+    return (iph->protocol == IPPROTO_TCP && tcph->rst == 1);
+}
+
 // TCP 체크섬 계산 함수
 unsigned short checksum(void *b, int len) {
     unsigned short *buf = b;
@@ -51,19 +56,21 @@ void xmas_scan(const char *src_ip, const char *target_ip, int target_port) {
     iph->protocol = IPPROTO_TCP;
     iph->saddr = inet_addr(src_ip);
     iph->daddr = inet_addr(target_ip);
-    iph->check = checksum((unsigned short *)iph, sizeof(struct iphdr));
 
     // TCP 헤더 설정
-    tcph->source = htons(12345);
-    tcph->dest = htons(target_port);
+    tcph->source = htons(12345);  // 송신 포트
+    tcph->dest = htons(target_port);  // 대상 포트
     tcph->seq = htonl(0);
     tcph->ack_seq = 0;
-    tcph->doff = 5;
+    tcph->doff = 5;  // TCP 헤더 길이 (20 바이트)
     tcph->fin = 1;
     tcph->psh = 1;
     tcph->urg = 1;
+    tcph->rst = 0;
+    tcph->syn = 0;
+    tcph->ack = 0;
     tcph->window = htons(512);
-    tcph->check = 0;
+    tcph->check = 0;  // 체크섬은 나중에 계산
     tcph->urg_ptr = 0;
 
     // 의사 헤더로 체크섬 계산
@@ -95,27 +102,32 @@ void xmas_scan(const char *src_ip, const char *target_ip, int target_port) {
         close(sockfd);
         return;
     }
+
     printf("XMAS 패킷 보냄 %s:%d\n", target_ip, target_port);
 
-    // 응답 수신
-    char recv_buffer[1024];
-    struct sockaddr_in source;
-    socklen_t source_len = sizeof(source);
-    ssize_t data_size = recvfrom(sockfd, recv_buffer, sizeof(recv_buffer), 0, (struct sockaddr *)&source, &source_len);
+    // 응답 대기
+    char recv_buffer[65536];
+    struct sockaddr_in src_addr;
+    socklen_t addr_len = sizeof(src_addr);
 
-    if (data_size < 0) {
-        if (errno == EAGAIN || errno == EWOULDBLOCK)
-            printf("포트 %d: filtered (응답 없음)\n", target_port);
+    struct timeval timeout = {3, 0};  // 3초 타임아웃
+    setsockopt(sockfd, SOL_SOCKET, SO_RCVTIMEO, (const char *)&timeout, sizeof(timeout));
+
+    ssize_t data_size = recvfrom(sockfd, recv_buffer, sizeof(recv_buffer), 0, (struct sockaddr *)&src_addr, &addr_len);
+    if (data_size == -1) {
+        if (errno == EAGAIN)
+            printf("포트 %d: 필터링됨 (응답 없음)\n", target_port);
         else
             perror("recvfrom 에러");
     } else {
         struct iphdr *recv_iph = (struct iphdr *)recv_buffer;
         struct tcphdr *recv_tcph = (struct tcphdr *)(recv_buffer + (recv_iph->ihl * 4));
 
-        if (recv_tcph->rst == 1)
-            printf("포트 %d: closed (RST 수신)\n", target_port);
-        else
-            printf("포트 %d: open (예상치 못한 응답)\n", target_port);
+        if (is_rst(recv_iph, recv_tcph) && ntohs(recv_tcph->dest) == 12345) {
+            printf("포트 %d: 닫힘 (RST 수신)\n", target_port);
+        } else {
+            printf("포트 %d: 열림 또는 필터링됨 (예상치 못한 응답)\n", target_port);
+        }
     }
 
     close(sockfd);
