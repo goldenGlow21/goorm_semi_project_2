@@ -41,12 +41,12 @@ void create_raw_packet(char *packet, const char *src_ip, int src_port, const cha
     struct iphdr *iph = (struct iphdr *)packet;
     struct tcphdr *tcph = (struct tcphdr *)(packet + sizeof(struct iphdr));
 
-    memset(packet, 0, sizeof(char) * 1024);
+    memset(packet, 0, PACKET_SIZE);
 
     iph->ihl = 5;
     iph->version = 4;
     iph->tos = 0;
-    iph->tot_len = htons(sizeof(struct iphdr) + sizeof(struct tcphdr));
+    iph->tot_len = htons(PACKET_SIZE);
     iph->id = htons(54321);
     iph->frag_off = 0;
     iph->ttl = 64;
@@ -64,7 +64,7 @@ void create_raw_packet(char *packet, const char *src_ip, int src_port, const cha
     tcph->ack_seq = 0;
     tcph->doff = 5;
 
-    tcph->window = htons(512);
+    tcph->window = htons(65535);
     tcph->check = 0;
     tcph->urg_ptr = 0;
 
@@ -82,7 +82,7 @@ void create_raw_packet(char *packet, const char *src_ip, int src_port, const cha
     pseudo_header.dst_addr = inet_addr(dst_ip);
     pseudo_header.zero = 0;
     pseudo_header.protocol = IPPROTO_TCP;
-    pseudo_header.tcp_len = htons(sizeof(struct tcphdr));
+    pseudo_header.tcp_len = htons(PACKET_SIZE - sizeof(struct iphdr));
     memcpy(&pseudo_header.tcp, tcph, sizeof(struct tcphdr));
     tcph->check = checksum((unsigned short *)&pseudo_header, sizeof(pseudo_header));
 }
@@ -94,7 +94,7 @@ void send_raw_packet(int sockfd, char *packet, const char *dst_ip, int dst_port)
     dest.sin_port = htons(dst_port);
     dest.sin_addr.s_addr = inet_addr(dst_ip);
 
-    if (sendto(sockfd, packet, sizeof(struct iphdr) + sizeof(struct tcphdr), 0, (struct sockaddr *)&dest, sizeof(dest)) < 0) {
+    if (sendto(sockfd, packet, PACKET_SIZE, 0, (struct sockaddr *)&dest, sizeof(dest)) < 0) {
         perror("데이터 보내지 못함.");
         close(sockfd);
         exit(1);

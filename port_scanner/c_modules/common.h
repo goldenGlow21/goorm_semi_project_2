@@ -15,6 +15,8 @@
 // TCP 플래그 정의
 #define SYN 1
 #define FIN 2
+// 패킷 사이즈
+#define PACKET_SIZE 1024
 
 // 공용 함수 선언
 

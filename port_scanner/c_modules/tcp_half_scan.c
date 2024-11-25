@@ -46,7 +46,7 @@ void start_syn_scan(const char *src_ip, int src_port, const char *dst_ip, int ds
     int sockfd = create_raw_socket();
     set_socket_options(sockfd);
 
-    char packet[1024];
+    char packet[PACKET_SIZE];
     create_raw_packet(packet, src_ip, src_port, dst_ip, dst_port, SYN);
 
     send_raw_packet(sockfd, packet, dst_ip, dst_port);
