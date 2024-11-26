@@ -1,7 +1,7 @@
 CC = gcc
 CFLAGS = -shared -fPIC
 TARGET = libscan.so
-OBJS = tcp_connect.c tcp_syn.c udp_scan.c xmas_scan.c ack_scan.c null_scan.c checksum.c
+OBJS = tcp_connect.c tcp_fin_scan.c tcp_half_scan.c udp_scan.c xmas_scan.c ack_scan.c null_scan.c common.c common.h thpool.c thpool.h
 
 all:
 	$(CC) $(CFLAGS) -o $(TARGET) $(OBJS)
