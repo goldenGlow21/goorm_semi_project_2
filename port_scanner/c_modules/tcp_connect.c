@@ -1,5 +1,7 @@
 #include "common.h"
 
+#define MAX_THREADS 16
+
 void task(void *arg);
 
 void start_connect_scan(const char *dst_ip, int dst_port)
@@ -24,25 +26,39 @@ void start_connect_scan(const char *dst_ip, int dst_port)
     close(sockfd);
 }
 
-int main()
-{
+
+int main() {
+    GHashTable *set = g_hash_table_new(g_direct_hash, g_direct_equal);
     clock_t start = clock(), finish;
     double duration;
     threadpool thpool = thpool_init(MAX_THREADS);
     int start_port = 1;
     int end_port = 8080;
-    int i;
-    for (i = start_port; i <= end_port; i++) {
-        thpool_add_work(thpool, task, (void *)(intptr_t)i);
+    int i = start_port;
+
+    srand(time(NULL));
+    while (i <= end_port) {
+        int port = rand() % (end_port - start_port + 1) + start_port;
+
+        if (g_hash_table_contains(set, GINT_TO_POINTER(port)))
+            continue;
+
+        g_hash_table_add(set, GINT_TO_POINTER(port));
+
+        thpool_add_work(thpool, task, (void *)(intptr_t)port);
+        i++;
     }
+
     thpool_wait(thpool);
     thpool_destroy(thpool);
     finish = clock();
     duration = (double)(finish - start) / CLOCKS_PER_SEC;
-    printf("duration: %f\n", duration);
+    printf("duration: %fsec\n", duration);
+
+    g_hash_table_destroy(set);
     return 0;
 }
 
 void task(void *arg) {
-    start_connect_scan("192.168.79.3", (int)(intptr_t)arg);
+    start_connect_scan("192.168.79.3", (intptr_t)arg);
 }
