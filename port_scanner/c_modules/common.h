@@ -12,6 +12,7 @@
 #include <unistd.h>
 #include <time.h>
 #include "thpool.h"
+#include <glib.h>
 
 // TCP 플래그 정의
 #define SYN 1
