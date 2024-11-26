@@ -5,47 +5,41 @@ import os
 lib_path = os.path.join(os.path.dirname(__file__), "../c_modules/libscan.so")
 lib = ctypes.CDLL(lib_path)
 
-# 각 스캔 기법에 대한 함수 정의
-def tcp_connect_scan(ip: str, port: int):
-    result = lib.tcp_connect(ctypes.c_char_p(ip.encode("utf-8")), ctypes.c_int(port))
-    return "open" if result == 1 else "closed"
+# 공통 스캔 함수
+def scan_port_with_c_module(scan_function_name: str, ip: str, port: int):
+    scan_function = getattr(lib, scan_function_name, None)
+    if not scan_function:
+        raise ValueError(f"Scan function {scan_function_name} not found in C module")
+    
+    result = scan_function(ctypes.c_char_p(ip.encode("utf-8")), ctypes.c_int(port))
+    return result
 
-def tcp_syn_scan(ip: str, port: int):
-    result = lib.tcp_syn(ctypes.c_char_p(ip.encode("utf-8")), ctypes.c_int(port))
-    return "open" if result == 1 else "closed"
-
-def udp_scan(ip: str, port: int):
-    result = lib.udp_scan(ctypes.c_char_p(ip.encode("utf-8")), ctypes.c_int(port))
-    return "open" if result == 1 else "closed"
-
-def xmas_scan(ip: str, port: int):
-    result = lib.xmas_scan(ctypes.c_char_p(ip.encode("utf-8")), ctypes.c_int(port))
-    return "open" if result == 1 else "closed"
-
-def null_scan(ip: str, port: int):
-    result = lib.null_scan(ctypes.c_char_p(ip.encode("utf-8")), ctypes.c_int(port))
-    return "open" if result == 1 else "closed"
-
-def ack_scan(ip: str, port: int):
-    result = lib.ack_scan(ctypes.c_char_p(ip.encode("utf-8")), ctypes.c_int(port))
-    return "open" if result == 1 else "closed"
-
-# 스캔 포트 관리 함수
+# 포트 스캔 함수
 def scan_ports(ip: str, ports: range, scan_type: str):
-    results = {}
+    open_ports = []
+    open_or_filtered_ports = []
+    
+    # 스캔 함수 이름 맵핑
+    scan_function_map = {
+        "tcp_connect": "tcp_connect",
+        "tcp_syn": "tcp_syn",
+        "udp": "udp_scan",
+        "xmas": "xmas_scan",
+        "null": "null_scan",
+        "ack": "ack_scan",
+    }
+    scan_function_name = scan_function_map.get(scan_type)
+    if not scan_function_name:
+        raise ValueError(f"Unsupported scan type: {scan_type}")
+
     for port in ports:
-        if scan_type == "tcp_connect":
-            results[port] = tcp_connect_scan(ip, port)
-        elif scan_type == "tcp_syn":
-            results[port] = tcp_syn_scan(ip, port)
-        elif scan_type == "udp":
-            results[port] = udp_scan(ip, port)
-        elif scan_type == "xmas":
-            results[port] = xmas_scan(ip, port)
-        elif scan_type == "null":
-            results[port] = null_scan(ip, port)
-        elif scan_type == "ack":
-            results[port] = ack_scan(ip, port)
-        else:
-            results[port] = "unknown"
-    return results
+        try:
+            status = scan_port_with_c_module(scan_function_name, ip, port)
+            if status == 1:
+                open_ports.append(port)
+            elif status == 2:  # open|filtered 상태
+                open_or_filtered_ports.append(port)
+        except Exception as e:
+            continue  # 에러가 발생한 경우 해당 포트는 무시하고 다음으로 진행
+
+    return open_ports, open_or_filtered_ports
