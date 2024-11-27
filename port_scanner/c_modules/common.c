@@ -176,3 +176,37 @@ int available_port() {
         return port;  // 포트가 사용 가능
     }
 }
+
+void get_ip_and_interfaces(char *src_ip, char *src_interface) {
+    struct ifaddrs *interfaces = NULL;
+    struct ifaddrs *ifa = NULL;
+    char ip[INET_ADDRSTRLEN];
+
+    // 인터페이스 목록 가져오기
+    if (getifaddrs(&interfaces) == -1) {
+        perror("getifaddrs");
+        exit(1);
+    }
+
+    // 인터페이스 목록 순회
+    for (ifa = interfaces; ifa != NULL; ifa = ifa->ifa_next) {
+        if (ifa->ifa_addr->sa_family == AF_INET) {  // IPv4 주소만 처리
+            struct sockaddr_in *sa = (struct sockaddr_in *)ifa->ifa_addr;
+            inet_ntop(AF_INET, &sa->sin_addr, src_ip, sizeof(ip));  // IP 주소 문자열로 변환
+
+            // 루프백 주소(127.0.0.1) 제외
+            if (strcmp(ip, "127.0.0.1") != 0) {
+                // 네트워크 인터페이스 이름과 IP 출력
+                printf("Interface: %s\tIP Address: %s\n", ifa->ifa_name, ip);
+                strncpy(src_interface, ifa->ifa_name, IF_NAMESIZE);
+                src_interface[IF_NAMESIZE - 1] = '\0';
+                return;
+            }
+        }
+    }
+
+    // 메모리 해제
+    if (interfaces != NULL) {
+        freeifaddrs(interfaces);
+    }
+}

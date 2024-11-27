@@ -13,6 +13,8 @@
 #include <time.h>
 #include "thpool.h"
 #include <glib.h>
+#include <ifaddrs.h>
+#include <net/if.h>
 
 // TCP 플래그 정의
 #define SYN 1
@@ -93,6 +95,8 @@ int is_rst(struct iphdr *iph, struct tcphdr *tcph);
 void receive_fin_null_xmas_response(int sockfd, int src_port, int time_limit);
 
 int available_port();
+
+void get_ip_and_interfaces();
 
 typedef struct {
  int dst_port;
