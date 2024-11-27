@@ -21,7 +21,7 @@
 #define XMAS 4
 
 // 패킷 사이즈
-#define PACKET_SIZE 1024
+#define PACKET_SIZE 40
 // 스레드 개수
 #define MAX_THREADS 16
 // 공용 함수 선언
@@ -91,5 +91,14 @@ int is_rst(struct iphdr *iph, struct tcphdr *tcph);
  */
 
 void receive_fin_null_xmas_response(int sockfd, int src_port, int time_limit);
+
+int available_port();
+
+typedef struct {
+ char *dst_ip;
+ char *src_ip;
+ int src_port;
+ int time_limit;
+}info;
 
 #endif // COMMON_H

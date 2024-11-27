@@ -152,3 +152,27 @@ int is_rst_ack(struct iphdr *iph, struct tcphdr *tcph) {
 int is_rst(struct iphdr *iph, struct tcphdr *tcph) {
     return (iph->protocol == IPPROTO_TCP && tcph->rst == 1);
 }
+
+int available_port() {
+    int sock;
+    struct sockaddr_in addr;
+    sock = socket(AF_INET, SOCK_STREAM, 0);
+    addr.sin_family = AF_INET;
+    addr.sin_addr.s_addr = htonl(INADDR_ANY);  // 모든 인터페이스에서 접속 허용
+    if (sock < 0) {
+        perror("포트 확인용 소켓 생성 실패");
+        return 0;
+    }
+
+    while (1)
+    {
+        int port = rand() % (65535 - 1024 + 1) + 1024;
+        addr.sin_port = htons(port);  // 포트 번호 설정
+        if (bind(sock, (struct sockaddr *)&addr, sizeof(addr)) < 0) {
+            close(sock);  // 포트가 이미 사용 중이거나 사용할 수 없으면 소켓 닫기
+            continue;  // 포트가 사용 중
+        }
+        close(sock);  // 바인딩 성공하면 소켓 닫기
+        return port;  // 포트가 사용 가능
+    }
+}
