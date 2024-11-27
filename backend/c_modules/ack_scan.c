@@ -48,5 +48,5 @@ void start_ack_scan(const char *src_ip, int src_port, const char *dst_ip, int ds
 
 int main()
 {
-    start_ack_scan("192.168.79.11", 10000, "192.168.79.3", 8080, 3);
+    start_ack_scan(get_ip(), available_port(TCP), "192.168.79.3", 8080, 3);
 }

@@ -13,6 +13,6 @@ void start_xmas_scan(const char *src_ip, int src_port, const char *dst_ip, int d
 
 int main()
 {
-    start_xmas_scan("180.68.168.239", 10000, "13.125.143.118", 60, 3);
+    start_xmas_scan(get_ip(), available_port(TCP), "192.168.79.3", 8080, 3);
     return 0;
 }

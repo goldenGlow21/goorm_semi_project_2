@@ -153,10 +153,13 @@ int is_rst(struct iphdr *iph, struct tcphdr *tcph) {
     return (iph->protocol == IPPROTO_TCP && tcph->rst == 1);
 }
 
-int available_port() {
+int available_port(int flag) {
     int sock;
     struct sockaddr_in addr;
-    sock = socket(AF_INET, SOCK_STREAM, 0);
+    if (flag == TCP)
+        sock = socket(AF_INET, SOCK_STREAM, 0);
+    else if (flag == UDP)
+        sock = socket(AF_INET, SOCK_DGRAM, 0);
     addr.sin_family = AF_INET;
     addr.sin_addr.s_addr = htonl(INADDR_ANY);  // 모든 인터페이스에서 접속 허용
     if (sock < 0) {
@@ -177,36 +180,45 @@ int available_port() {
     }
 }
 
-void get_ip_and_interfaces(char *src_ip, char *src_interface) {
+char *get_ip() {
     struct ifaddrs *interfaces = NULL;
     struct ifaddrs *ifa = NULL;
-    char ip[INET_ADDRSTRLEN];
+    char *ip = malloc(INET_ADDRSTRLEN);  // 동적 메모리 할당
+
+    if (ip == NULL) {
+        perror("malloc");
+        return NULL;
+    }
 
     // 인터페이스 목록 가져오기
     if (getifaddrs(&interfaces) == -1) {
         perror("getifaddrs");
-        exit(1);
+        free(ip);
+        return NULL;
     }
 
     // 인터페이스 목록 순회
     for (ifa = interfaces; ifa != NULL; ifa = ifa->ifa_next) {
-        if (ifa->ifa_addr->sa_family == AF_INET) {  // IPv4 주소만 처리
+        if (ifa->ifa_addr && ifa->ifa_addr->sa_family == AF_INET) {  // IPv4 주소만 처리
             struct sockaddr_in *sa = (struct sockaddr_in *)ifa->ifa_addr;
-            inet_ntop(AF_INET, &sa->sin_addr, src_ip, sizeof(ip));  // IP 주소 문자열로 변환
+
+            // IP 주소 문자열로 변환
+            if (inet_ntop(AF_INET, &sa->sin_addr, ip, INET_ADDRSTRLEN) == NULL) {
+                perror("inet_ntop");
+                continue;
+            }
 
             // 루프백 주소(127.0.0.1) 제외
             if (strcmp(ip, "127.0.0.1") != 0) {
-                // 네트워크 인터페이스 이름과 IP 출력
                 printf("Interface: %s\tIP Address: %s\n", ifa->ifa_name, ip);
-                strncpy(src_interface, ifa->ifa_name, IF_NAMESIZE);
-                src_interface[IF_NAMESIZE - 1] = '\0';
-                return;
+                freeifaddrs(interfaces);  // 메모리 해제
+                return ip;  // IP 주소 반환
             }
         }
     }
 
-    // 메모리 해제
-    if (interfaces != NULL) {
-        freeifaddrs(interfaces);
-    }
+    // 유효한 IP가 없으면 NULL 반환
+    free(ip);
+    freeifaddrs(interfaces);
+    return NULL;
 }

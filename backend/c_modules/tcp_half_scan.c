@@ -58,5 +58,5 @@ void start_syn_scan(const char *src_ip, int src_port, const char *dst_ip, int ds
 // 메인
 int main()
 {
-    start_syn_scan("192.168.79.11", 10000, "192.168.79.3", 8080, 3);
+    start_syn_scan(get_ip(), available_port(), "192.168.79.3", 8080, 3);
 }

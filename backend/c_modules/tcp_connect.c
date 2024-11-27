@@ -1,10 +1,6 @@
 #include "common.h"
 
 
-
-
-void task(void *arg);
-
 void start_connect_scan(const char *dst_ip, int dst_port)
 {
 
@@ -28,42 +24,7 @@ void start_connect_scan(const char *dst_ip, int dst_port)
 }
 
 int main() {
-    int start_port = 1; // 수정 필요
-    int end_port = 8080; // 수정 필요
-    GHashTable *set = g_hash_table_new(g_direct_hash, g_direct_equal);
-    clock_t start = clock(), finish;
-    double duration;
-    threadpool thpool = thpool_init(MAX_THREADS);
-    int i = start_port;
-    srand(time(NULL));
-    while (i <= end_port) {
-        info *arg = malloc(sizeof(info));
-        if (!arg) {
-            perror("메모리 할당 실패");
-            exit(1);
-        }
-        arg->dst_ip = "192.168.79.3"; // 수정 필요
-        arg->dst_port = rand() % (end_port - start_port + 1) + start_port;
-        if (g_hash_table_contains(set, GINT_TO_POINTER(arg->dst_port)))
-            continue;
-        g_hash_table_add(set, GINT_TO_POINTER(arg->dst_port));
-
-        thpool_add_work(thpool, task, (void *)arg);
-        i++;
-    }
-
-    thpool_wait(thpool);
-    thpool_destroy(thpool);
-    finish = clock();
-    duration = (double)(finish - start) / CLOCKS_PER_SEC;
-    printf("duration: %fsec\n", duration);
-
-    g_hash_table_destroy(set);
+    start_connect_scan("192.168.79.3", 8080);
     return 0;
 }
 
-void task(void *arg) {
-    info *task_arg = arg;
-    start_connect_scan(task_arg->dst_ip, task_arg->dst_port);
-    free(arg);
-}

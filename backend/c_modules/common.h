@@ -11,8 +11,6 @@
 #include <netinet/tcp.h>
 #include <unistd.h>
 #include <time.h>
-#include "thpool.h"
-#include <glib.h>
 #include <ifaddrs.h>
 #include <net/if.h>
 
@@ -24,8 +22,9 @@
 
 // 패킷 사이즈
 #define PACKET_SIZE 40
-// 스레드 개수
-#define MAX_THREADS 16
+// TCP/UDP
+#define TCP 1
+#define UDP 2
 // 공용 함수 선언
 
 /**
@@ -96,7 +95,7 @@ void receive_fin_null_xmas_response(int sockfd, int src_port, int time_limit);
 
 int available_port();
 
-void get_ip_and_interfaces();
+char *get_ip();
 
 typedef struct {
     int dst_port;
