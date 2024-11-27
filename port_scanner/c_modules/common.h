@@ -95,6 +95,7 @@ void receive_fin_null_xmas_response(int sockfd, int src_port, int time_limit);
 int available_port();
 
 typedef struct {
+ int dst_port;
  char *dst_ip;
  char *src_ip;
  int src_port;
