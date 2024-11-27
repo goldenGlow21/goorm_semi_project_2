@@ -14,5 +14,5 @@ void start_null_scan(const char *src_ip, int src_port, const char *dst_ip, int d
 
 int main()
 {
-    start_null_scan("192.168.79.11", 10000, "192.168.79.3", 8080, 3);
+    start_null_scan("180.68.168.239", 50000, "192.168.100.5", 8080, 3);
 }
