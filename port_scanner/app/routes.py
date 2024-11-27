@@ -7,10 +7,16 @@ bp = Blueprint("main", __name__)
 
 @bp.route("/", methods=["GET"])
 def home():
+    """
+    메인 페이지 렌더링
+    """
     return render_template("index.html")
 
 @bp.route("/scan", methods=["POST"])
 def scan():
+    """
+    포트 스캔 요청 처리
+    """
     data = request.get_json()
     target_ip = data.get("target_ip")
     scan_type = data.get("scan_type")
@@ -30,27 +36,17 @@ def scan():
     except ValueError:
         return jsonify({"error": "Invalid port range"}), 400
 
-    ports = range(start_port, end_port + 1)
-
     # 스캔 수행
     try:
-        open_ports, open_or_filtered_ports = scan_ports(target_ip, ports, scan_type)
+        scan_results = scan_ports(target_ip, start_port, end_port, scan_type)
     except Exception as e:
         return jsonify({"error": f"Scan failed: {str(e)}"}), 500
 
     # 결과 기록
-    scan_time = datetime.utcnow().isoformat() + "Z"
-    log_entry = {
-        "ip": target_ip,
-        "open": open_ports,
-        "open_or_filtered": open_or_filtered_ports,
-        "scan_type": scan_type,
-        "scan_time": scan_time,
-    }
-    add_scan_log(log_entry)
+    add_scan_log(scan_results)
 
-    # 응답 생성
-    return jsonify(log_entry)
+    # 응답 반환
+    return jsonify(scan_results)
 
 @bp.route("/logs", methods=["GET"])
 def logs():
