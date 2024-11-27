@@ -99,11 +99,11 @@ int available_port();
 void get_ip_and_interfaces();
 
 typedef struct {
- int dst_port;
- char *dst_ip;
- char *src_ip;
- int src_port;
- int time_limit;
+    int dst_port;
+    char *dst_ip;
+    char *src_ip;
+    int src_port;
+    int time_limit;
 }info;
 
 #endif // COMMON_H
