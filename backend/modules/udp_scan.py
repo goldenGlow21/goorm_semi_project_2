@@ -17,10 +17,10 @@ def udp_scan(target, port):
     # 패킷 전송 및 응답 수신 sr1함수는 패킷을 전송하고 첫 번째 응답을 기다리는 함수
     response = sr1(packet, timeout=1)
 
-    if response is None:  # 응답x == 열려 있음
+    if response is None:  # 응답x == 열려 있거나 필터링 됨
         return port
     elif response.haslayer(ICMP) and response[ICMP].type == 3: # 응답o == 닫혀잇음
-        print("포트 닫혀 있음")
+        pass
     time.sleep(0) # 속도 조절 시 사용할 것
 
 
@@ -49,6 +49,6 @@ if __name__ == "__main__":
     ports = multi_udp_scan(target_ip, start_port, end_port)
 
     if ports:
-        print(f"포트 열림 : {ports}")
+        print(f"포트 총 {len(ports)}개 열려 있거나 필터링 됨 : {ports}")
     else:
         print("포트 닫힘")
