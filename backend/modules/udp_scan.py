@@ -29,7 +29,7 @@ def multi_udp_scan(target_ip, start_port, end_port):
     random_ports = list(range(start_port, end_port+1))
     time.sleep(1)
     random.shuffle(random_ports)
-    with ThreadPoolExecutor(max_workers=os.cpu_count() * 10) as executor:
+    with ThreadPoolExecutor(max_workers=os.cpu_count() * 2) as executor:
         results = list(executor.map(lambda port: udp_scan(target_ip, port), random_ports))
     open_or_fiterd_ports = list(filter(None, results)) # 필터링된 포트
     open_or_fiterd_ports.sort()
