@@ -6,13 +6,14 @@ import time
 import random
 import os
 from concurrent.futures import ThreadPoolExecutor
+from common import get_port
 
 # UDP 스캔 함수
 def udp_scan(target, port):
     conf.verb = 0  # 디버깅 메시지 0이면 출력 안함 1이면 출력 함
 
     # UDP 패킷 생성
-    packet = IP(dst=target) / UDP(dport=port) # / ip와 tcp를 묶는 연산자
+    packet = IP(dst=target) / UDP(sport=get_port(), dport=port) # / ip와 tcp를 묶는 연산자
     # 패킷 전송 및 응답 수신 sr1함수는 패킷을 전송하고 첫 번째 응답을 기다리는 함수
     response = sr1(packet, timeout=1)
 
