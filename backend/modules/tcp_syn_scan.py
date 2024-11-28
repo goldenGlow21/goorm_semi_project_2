@@ -43,13 +43,10 @@ if __name__ == "__main__":
     if len(sys.argv) < 3:
         print("Usage: python tcp_syn_scan.py <target> <port> <port>")
         sys.exit(1)
-
     target_ip = sys.argv[1]
     start_port = int(sys.argv[2])
     end_port = int(sys.argv[3])
-
     port = multi_syn_scan(target_ip, start_port, end_port)
-
 
     if port:
         print(f"포트 열림 : {port}")
