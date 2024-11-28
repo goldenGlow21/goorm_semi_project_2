@@ -1,6 +1,5 @@
 # 양인규 테스트 함 추가 테스트 필요함
 import random
-from contextlib import closing
 from common import get_port
 from scapy.all import send, sr1, conf  # from scapy.all import IP, TCP, sr1, conf
 from scapy.layers.inet import IP, TCP
@@ -8,7 +7,6 @@ from concurrent.futures import ThreadPoolExecutor
 import sys
 import time
 import os
-import socket
 
 
 # syn 스캔 함수

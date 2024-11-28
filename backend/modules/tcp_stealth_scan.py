@@ -1,5 +1,5 @@
 # 양인규 로컬에서 테스트 함 추가 테스트 필요함
-import socket
+
 import sys
 import time
 import random
@@ -24,8 +24,9 @@ def stealth_scan(flag, target, port):
     elif flag == "X":
         packet = IP(dst=target) / TCP(sport=random_port, dport=port, flags="FPU")
     # 패킷 전송 및 응답 수신 sr1함수는 패킷을 전송하고 첫 번째 응답을 기다리는 함수
-    response = sr1(packet, timeout=1)
+    response = sr1(packet, timeout=0.5)
     if response is None:  # 응답x == 포트 열림
+        print("응답 없음")
         return port
     time.sleep(0) # 속도 조절 시 사용할 것
 
