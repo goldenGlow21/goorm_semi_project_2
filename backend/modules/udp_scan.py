@@ -20,7 +20,7 @@ def udp_scan(target, port):
     if response is None:  # 응답x == 열려 있음
         return port
     elif response.haslayer(ICMP) and response[ICMP].type == 3: # 응답o == 닫혀잇음
-        return
+        print("포트 닫혀 있음")
     time.sleep(0) # 속도 조절 시 사용할 것
 
 
@@ -29,13 +29,13 @@ def multi_udp_scan(target, start_port, end_port):
     random_ports = list(range(start_port, end_port+1))
     time.sleep(1)
     random.shuffle(random_ports)
-    with ThreadPoolExecutor(max_workers=os.cpu_count() * 2) as executor:
+    with ThreadPoolExecutor(max_workers=os.cpu_count() * 10) as executor:
         results = list(executor.map(lambda port: udp_scan(target, port), random_ports))
-    open_ports = list(filter(None, results)) # 필터링된 포트
-    open_ports.sort()
+    open_or_fiterd_ports = list(filter(None, results)) # 필터링된 포트
+    open_or_fiterd_ports.sort()
     end = time.time()
     print(f"{end - start:.5f} sec")
-    return open_ports
+    return open_or_fiterd_ports
 
 if __name__ == "__main__":
     if len(sys.argv) < 3:
