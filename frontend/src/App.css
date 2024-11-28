@@ -1,0 +1,305 @@
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background-color: black;
+  color: white;
+}
+
+.container {
+  text-align: center;
+  padding: 20px;
+}
+
+.container .header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px;
+  border-bottom: 2px solid #0073e6;
+}
+
+.container .header .logo img { /*logo 클래스 내부의 img 태그를 대상*/
+  width: 75px;
+  height: 75px;
+}
+
+/* 이 위까지 기본 헤더 설정 */
+
+.container .header .recent-scan-button {
+  background-color: #0073e6;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 20px;
+  cursor: pointer;
+}
+
+.container .main-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 70vh; /* 화면 높이의 70% 사용 */
+}
+
+.container .main-content .input-box {
+  width: 40%;
+  padding: 10px;
+  border-radius: 10px;
+  border: none;
+  margin: 20px 0;
+  font-size: 16px;
+}
+
+.container .main-content .options {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.container .main-content .options .button-container {
+  display: flex;
+  gap: 10px;
+}
+
+.container .main-content .options .button-container .option-button {
+  background-color: #f0f0f0;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+.container .main-content .options .help-button {
+  background-color: #915050;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 15px;
+  cursor: pointer;
+}
+
+.container .main-content .selected-option {
+  margin-top: 20px;
+  text-align: center;
+  font-size: 16px;
+  color: #ffffff;
+}
+
+.container .main-content .scan-button {
+  background-color: #00ff99;
+  color: black;
+  border: none;
+  padding: 15px 40px; /* 버튼 크기를 키움 */
+  border-radius: 25px;
+  cursor: pointer;
+  font-size: 18px;
+  font-weight: bold;
+  margin-top: 50px;
+}
+
+.container .main-content .scan-container {
+  display: flex;
+}
+
+.container .main-content .scan-container .error-container {
+  text-align: center;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+.container .main-content .error-container .error {
+  color: red;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.container .main-content .error-container .retry-button {
+  background-color: #007bff;
+  color: black;
+  border: none;
+  padding: 15px 40px;
+  border-radius: 25px;
+  cursor: pointer;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.container .main-content .error-container .retry-button:hover {
+  background-color: #5c019d;
+}
+
+.container .line {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px;
+  border-bottom: 2px solid #383838;
+}
+
+.container .footer {
+  margin-top: 20px;
+  font-size: 12px;
+  color: gray;
+}
+
+
+
+
+/* 아래부터 스캔 결과 화면 */
+
+.scan-result-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background-color: #121212;
+  color: #ffffff;
+  font-family: Arial, sans-serif;
+}
+
+.scan-result-container .header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+  background-color: #1e1e1e;
+}
+
+.scan-result-container .header .logo img {
+  width: 50px;
+  height: 50px;
+}
+
+.scan-result-container .header h1 {
+  margin-left: 500px;
+  margin-right: 300px;
+  font-size: 24px;
+  color: #00bfff;
+}
+
+.scan-result-container .header .mainboard-button {
+  background-color: #00bfff;
+  color: #000;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.scan-result-container .header .mainboard-button:hover {
+  background-color: #008fcc;
+}
+
+.scan-result-container .divider { /* 구분선 */
+  height: 2px;
+  background-color: #333;
+}
+
+.scan-result-container .content-wrapper { /* 본문 컨텐츠 */
+  display: flex;
+  flex: 1;
+}
+
+.scan-result-container .content-wrapper .menu { /* 왼쪽 메뉴 */
+  width: 20%;
+  background-color: #1e1e1e;
+  padding: 20px;
+  border-right: 1px solid #333;
+}
+
+.scan-result-container .content-wrapper .menu h2 {
+  font-size: 20px;
+  margin-bottom: 15px;
+  color: #00bfff;
+}
+
+.scan-result-container .content-wrapper .menu ul {
+  list-style: none;
+  padding: 0;
+}
+
+.scan-result-container .content-wrapper .menu li {
+  padding: 10px;
+  margin: 5px 0;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: background 0.3s;
+}
+
+.scan-result-container .content-wrapper .menu li:hover {
+  background-color: #333;
+}
+
+.scan-result-container .content-wrapper .menu li.active {
+  background-color: #00bfff;
+  color: #000;
+}
+
+.scan-result-container .content-wrapper .content { /* 오른쪽 컨텐츠 */
+  flex: 1;
+  padding: 20px;
+}
+
+.scan-result-container .content-wrapper .content h2 {
+  font-size: 24px;
+  margin-bottom: 20px;
+}
+
+
+
+
+
+/* 아래부턴 Recent Scan */
+
+.scan-result-container .header .reload-button {
+  background-color: #00bfff;
+  color: #000;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+/* 테이블 스타일 */
+.scan-result-container .table-container {
+  margin-top: 20px;
+}
+
+.scan-result-container .table-container .table {
+  width: 70%;
+  border-collapse: collapse;
+  margin-top: 10px;
+  color: #fff;
+}
+
+.table-container th,
+.table-container td {
+  border: 1px solid #444;
+  padding: 8px;
+  text-align: left;
+}
+
+.table-container th {
+  background-color: #333;
+}
+
+.table-container tr:nth-child(even) {
+  background-color: #2a2a2a;
+}
+
+.table-container tr:hover {
+  background-color: #3a3a3a;
+}
+
+/* 메시지 스타일 */
+.no-data-message {
+  margin-top: 20px;
+  font-size: 16px;
+  color: #bbb;
+}

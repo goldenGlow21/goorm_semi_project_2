@@ -1,0 +1,26 @@
+[
+    {
+        "ip": "192.168.1.1",
+        "results": {
+            "22": {
+                "protocol": "tcp_connect",
+                "status": "open"
+            },
+            "80": {
+                "protocol": "tcp_connect",
+                "status": "closed"
+            },
+            "443": {
+                "protocol": "tcp_connect",
+                "status": "open"
+            },
+            "445": {
+                "protocol": "tcp_connect",
+                "status": "closed"
+            },
+            "...": "..."
+        },
+        "scan_type": "tcp_connect",
+        "scan_time": "2024-11-22T15:00:00Z"
+    }
+]
