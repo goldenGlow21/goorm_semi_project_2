@@ -27,7 +27,14 @@ def scan_ports(ip: str, start_port: int, end_port: int, scan_type: str):
     
     scan_function = SCAN_FUNCTIONS[scan_type]
     try:
-        results = scan_function(ip, start_port, end_port, scan_type)
+        if scan_type == "tcp_fin":
+            results = scan_function("F", ip, start_port, end_port)
+        elif scan_type == "xmas":
+            results = scan_function("X", ip, start_port, end_port)
+        elif scan_type == "null":
+            results = scan_function("N", ip, start_port, end_port)
+        else :
+            results = scan_function(ip, start_port, end_port, scan_type)
         return {
             "open": results.get("open", []),
             "open_or_filtered": results.get("open_or_filtered", []),
