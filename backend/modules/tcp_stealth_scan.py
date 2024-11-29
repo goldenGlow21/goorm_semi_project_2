@@ -1,12 +1,17 @@
-import sys
+import os, sys
 import time
 import random
 import threading
+
+PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+if PROJECT_ROOT not in sys.path:
+    sys.path.insert(0, PROJECT_ROOT)
+
 from concurrent.futures import ThreadPoolExecutor
 from multiprocessing import Pool, cpu_count
 from scapy.all import sr1, conf  # from scapy.all import IP, TCP, sr1, conf
 from scapy.layers.inet import IP, TCP
-from .common import get_available_port
+from common import get_available_port
 
 LOCK = threading.Lock() # 뮤텍스 락
 CPU_CORES = cpu_count()
