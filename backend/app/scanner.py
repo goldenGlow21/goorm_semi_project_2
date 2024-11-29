@@ -35,9 +35,14 @@ def scan_ports(ip: str, start_port: int, end_port: int, scan_type: str):
             results = scan_function("N", ip, start_port, end_port)
         else :
             results = scan_function(ip, start_port, end_port)
-        return {
-            "open": results.get("open", []),
-            "open_or_filtered": results.get("open_or_filtered", []),
-        }
+        # 리스트를 딕셔너리로 변환
+        if isinstance(results, list):
+            return {
+                "open_ports": results,  # 열린 포트 리스트
+                "total_ports_scanned": len(results)  # 스캔된 포트 개수
+            }
+        else:
+            # 예외적인 반환값 처리
+            raise RuntimeError("Unexpected result format from scan function")
     except Exception as e:
         raise RuntimeError(f"Scanning failed: {str(e)}")
