@@ -44,7 +44,7 @@ def scan():
         except Exception as e:
             return jsonify({"error": f"Failed to resolve domain to IP: {str(e)}"}), 400
 
-    if scan_type not in ["tcp_connect", "tcp_syn", "tcp_fin", "udp", "xmas", "null", "ack"]:
+    if scan_type not in ["tcp_connect", "tcp_syn", "tcp_fin", "udp", "xmas", "null", "ack", "additional_info"]:
         return jsonify({"error": f"Unsupported scan type: {scan_type}"}), 400
     try:
         start_port = int(start_port)
@@ -57,6 +57,10 @@ def scan():
     # 스캔 수행
     try:
         scan_results = scan_ports(target_ip, start_port, end_port, scan_type)
+
+        # "additional_info" 스캔은 결과를 그대로 반환
+        if scan_type == "additional_info":
+            return jsonify(scan_results)
 
         # 반환 값이 리스트일 경우 처리
         if isinstance(scan_results, list):
