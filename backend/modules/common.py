@@ -8,7 +8,7 @@ def get_port():
     with closing(socket.socket(socket.AF_INET, socket.SOCK_STREAM)) as sock:
         for _ in range(max_try):
             try:
-                port = random.randint(1024, 65535)
+                port = random.randint(49152, 65535)
                 sock.bind(('', port))
                 return port
             except socket.error as e:
