@@ -6,7 +6,7 @@ import os
 from concurrent.futures import ThreadPoolExecutor
 from scapy.all import sr1, conf  # from scapy.all import IP, TCP, sr1, conf
 from scapy.layers.inet import IP, TCP, ICMP
-from common import get_port
+from .common import get_port
 
 # ack 스캔 함수
 def ack_scan(target_ip, port):

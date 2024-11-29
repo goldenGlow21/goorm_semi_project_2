@@ -3,7 +3,7 @@ import sys
 import time
 import random
 import os
-from common import get_port
+from .common import get_port
 from concurrent.futures import ThreadPoolExecutor
 from scapy.all import sr1, conf #from scapy.all import IP, TCP, sr1, conf
 from scapy.layers.inet import IP, TCP

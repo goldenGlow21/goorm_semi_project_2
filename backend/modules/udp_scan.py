@@ -6,7 +6,7 @@ import time
 import random
 import os
 from concurrent.futures import ThreadPoolExecutor
-from common import get_port
+from .common import get_port
 
 # UDP 스캔 함수
 def udp_scan(target_ip, port):

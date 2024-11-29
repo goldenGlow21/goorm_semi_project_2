@@ -1,8 +1,11 @@
 from modules.tcp_ack_scan import ack_scan
 from modules.tcp_connection_scan import connection_scan
-from modules.tcp_half_scan import syn_scan
+from modules.tcp_syn_scan import syn_scan
 from modules.tcp_stealth_scan import stealth_scan
 from modules.udp_scan import udp_scan
+import sys, os
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 # 스캔 수행 함수 매핑
 SCAN_FUNCTIONS = {
