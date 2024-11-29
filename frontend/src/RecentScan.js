@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Table, TableHead, TableBody, TableCell, TableContainer, TableRow, Paper, Typography, Box, Button } from "@mui/material";
+import { errorAlert } from "./component/Alert";
 
 const RecentScan = () => {
   const [recentScanData, setRecentScanData] = useState([]);
@@ -10,16 +11,18 @@ const RecentScan = () => {
   /* API 호출 */
   const fetchRecentScanData = async () => {
     try {
-      const response = await fetch("http://localhost:5000/recentScan"); // /recentScan API 호출
-      if (!response.ok) {
+      const response = await fetch("http://localhost:5000/logs"); // /recentScan API 호출
+      
+      if (response.status === 200) {
+        const data = await response.json(); // JSON 데이터를 파싱
+        setRecentScanData(data); // 상태에 저장
+      } else {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-      const data = await response.json(); // JSON 데이터를 파싱
-      setRecentScanData(data); // 상태에 저장
-      // 이게 어떻게 저장되는지를 보고 파싱할 정보들을 나열하면 될 듯 하다.
     } catch (err) {
       console.error("Error fetching scan data:", err);
-      setError("Unable to fetch scan data."); // 오류 메시지 저장
+      setError("스캔 데이터를 불러오지 못했습니다.");
+      errorAlert("스캔 데이터를 불러오지 못했습니다.");
     }
   };
 
@@ -51,22 +54,13 @@ const RecentScan = () => {
         }}
       >
         <Box className="logo" sx={{ display: "flex", alignItems: "center" }}>
-          <img
-            src="/goormton.png"
-            alt="Logo"
-            style={{ height: "50px", marginRight: "10px" }}
-          />
+          <img src="/goormton.png" alt="Logo" style={{ height: "50px", marginRight: "10px" }}/>
           <Typography variant="h5" color="white">
             Port Scanning Project
           </Typography>
         </Box>
         <Box>
-          <Button
-            variant="contained"
-            color="secondary"
-            onClick={fetchRecentScanData}
-            sx={{ marginRight: 1 }}
-          >
+          <Button variant="contained" color="secondary" onClick={fetchRecentScanData} sx={{ marginRight: 1 }}>
             Reload
           </Button>
           <Button variant="contained" color="info" onClick={() => navigate("/")}>
@@ -78,19 +72,19 @@ const RecentScan = () => {
       {/* Table Section */}
       <div>
         <h1>Recent Scans</h1>
-        {error ? (
-          <Typography color="error">{error}</Typography>
-        ) : recentScanData.length === 0 ? (
-          <Typography>No recent scans available.</Typography> // 데이터가 없을 때 메시지
-        ) : (
-          <TableContainer component={Paper}>
+        {error
+         ? ( <Typography color="error">{error}</Typography> )
+         : recentScanData.length === 0
+          ? ( <Typography>No recent scans available.</Typography> ) // 데이터가 없을 때 메시지
+          :
+        ( <TableContainer component={Paper}>
             <Table>
               <TableHead>
                 <TableRow>
                   <TableCell>Date</TableCell>
                   <TableCell>IP</TableCell>
-                  <TableCell>Start Port</TableCell>
-                  <TableCell>End Port</TableCell>
+                  <TableCell>Open Ports</TableCell>
+                  <TableCell>Open or Filtered Ports</TableCell>
                   <TableCell>Scan Type</TableCell>
                 </TableRow>
               </TableHead>
@@ -101,11 +95,11 @@ const RecentScan = () => {
                     onClick={() => handleRowClick(scanData)}
                     style={{ cursor: "pointer" }}
                   >
-                    <TableCell>{scanData.date || "NULL"}</TableCell>
+                    <TableCell>{scanData.scan_time || "NULL"}</TableCell>
                     <TableCell>{scanData.ip || "NULL"}</TableCell>
-                    <TableCell>{scanData.startPort || "NULL"}</TableCell>
-                    <TableCell>{scanData.endPort || "NULL"}</TableCell>
-                    <TableCell>{scanData.scanType || "NULL"}</TableCell>
+                    <TableCell>{scanData.open || "NULL"}</TableCell>
+                    <TableCell>{scanData.open_or_filtered || "NULL"}</TableCell>
+                    <TableCell>{scanData.scan_type || "NULL"}</TableCell>
                   </TableRow>
                 ))}
               </TableBody>

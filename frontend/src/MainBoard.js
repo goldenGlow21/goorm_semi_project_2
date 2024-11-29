@@ -1,8 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { TextField, Menu, MenuItem, Typography, Button, Box } from "@mui/material";
 import BasicHelpPopover from "./component/Help";
 import "./App.css";
+import { loadingAlert, successAlert, errorAlert } from "./component/Alert";
+import Swal from "sweetalert2";
 
 const categories = {
   category1: {
@@ -31,6 +33,12 @@ const categories = {
       { id: "scan4", type: "ack", label: "ACK" },
     ],
   },
+  category4: {
+    label: "추가 정보 확인",
+    options: [
+      { id: "scan1", type:"additional_info", label:"추가 정보"},
+    ]
+  }
 };
 
 const MainBoard = () => {
@@ -68,6 +76,9 @@ const MainBoard = () => {
     setShowResult(false);
     setError(null);
 
+    // 로딩창
+    loadingAlert("데이터 요청 중입니다...");
+
     const userData = {
       target_ip,
       target_start_port,
@@ -83,6 +94,9 @@ const MainBoard = () => {
       });
 
       if (response.status === 200) {
+        Swal.close(); // 로딩 창 닫음
+        successAlert(); // 성공 창 렌더링
+
         const scanData = await response.json();
         setShowResult(true);
         setScanResult(scanData);
@@ -93,6 +107,7 @@ const MainBoard = () => {
     } catch (err) {
       console.error("Error during scan:", err);
       setError("스캔 중 문제가 발생했습니다.");
+      errorAlert("스캔 중 문제가 발생했습니다.");
     }
   };
 

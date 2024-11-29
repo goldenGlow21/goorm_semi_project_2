@@ -11,7 +11,8 @@ const ScanResult = () => {
     open_ports: [], 
     open_or_filtered: [], 
     scan_type: "Unknown", 
-    scan_time: "Unknown" 
+    scan_time: "Unknown",
+    additional_info: [],
   };
 
   // 타입에 따라 데이터를 통일
@@ -23,12 +24,8 @@ const ScanResult = () => {
   const navigate = useNavigate();
 
   const renderContent = () => {
-    console.log("전달받은 데이터", data); //여기서도 안 나옴
-    console.log("합쳐진 데이터", unifiedData);
 
     switch (selectedMenu) {
-      // 받을 json { IP : "192.168.1.1, open : [23, 44 ~~], open_or_filtered : [24, 25, 12], "scan_type": "tcp_connect", "scan_time": "2024-11-25T15:00:00Z" }
-      // 여기에 추가 기능들 OS + 서비스, 취약점
       case "IP":
         return <p>{ unifiedData.ip || "IP 데이터가 없습니다."}</p>;
       case "Open Ports":
@@ -53,6 +50,8 @@ const ScanResult = () => {
         return <p>{unifiedData.scan_type || "스캔 타입 정보가 없습니다."}</p>;
       case "Scan Time":
         return <p>{unifiedData.scan_time || "스캔 시간 정보가 없습니다."}</p>;
+      case "Additional Information":
+        return <p>{unifiedData.additional_info || "추가 정보가 없습니다."}</p>;
       default:
         return <p>메뉴를 선택하세요.</p>;
     }
@@ -92,6 +91,9 @@ const ScanResult = () => {
             </li>
             <li className={selectedMenu === "Scan Time" ? "active" : ""} onClick={() => setSelectedMenu("Scan Time")}>
               스캔 시간
+            </li>
+            <li className={selectedMenu === "Additional Info" ? "active" : ""} onClick={() => setSelectedMenu("Additional Information")}>
+              추가 정보
             </li>
           </ul>
         </aside>
