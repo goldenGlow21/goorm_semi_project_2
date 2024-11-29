@@ -18,6 +18,20 @@ def add_scan_log(entry):
     :param entry: 스캔 결과 딕셔너리
     """
     initialize_log_file()
+
+    # additional_info 타입은 로그를 남기지 않음
+    if entry.get("scan_type") == "additional_info":
+        return
+
+    # 로그 형식 변환
+    log_entry = {
+        "ip": entry.get("ip"),
+        "open": entry.get("open", []),
+        "open_or_filtered": entry.get("open_or_filtered", []),
+        "scan_type": entry.get("scan_type"),
+        "scan_time": entry.get("scan_time"),
+    }
+
     try:
         with log_lock:  # 파일 읽기/쓰기 작업 보호
             with open(LOG_FILE_PATH, "r") as log_file:
@@ -28,7 +42,7 @@ def add_scan_log(entry):
     logs.append(entry)
 
     with open(LOG_FILE_PATH, "w") as log_file:
-        json.dump(logs, log_file, indent=4)
+        json.dump(logs, log_file, indent=4, separators=(",", ": ")) # 줄바꿈 없이 한 줄로 리스트를 저장
 
 def get_scan_logs():
     """
