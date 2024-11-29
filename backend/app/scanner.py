@@ -1,7 +1,7 @@
 from modules.tcp_ack_scan import ack_scan
 from modules.tcp_connection_scan import connection_scan
 from modules.tcp_syn_scan import syn_scan
-from modules.tcp_stealth_scan import stealth_scan
+from modules.tcp_stealth_scan import multi_stealth_scan
 from modules.udp_scan import udp_scan
 import sys, os
 
@@ -11,10 +11,10 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 SCAN_FUNCTIONS = {
     "tcp_connect": connection_scan,
     "tcp_syn": syn_scan,
-    "tcp_fin": stealth_scan,
+    "tcp_fin": multi_stealth_scan,
     "udp": udp_scan,
-    "xmas": stealth_scan,
-    "null": stealth_scan,
+    "xmas": multi_stealth_scan,
+    "null": multi_stealth_scan,
     "ack": ack_scan,
 }
 
@@ -34,7 +34,7 @@ def scan_ports(ip: str, start_port: int, end_port: int, scan_type: str):
         elif scan_type == "null":
             results = scan_function("N", ip, start_port, end_port)
         else :
-            results = scan_function(ip, start_port, end_port, scan_type)
+            results = scan_function(ip, start_port, end_port)
         return {
             "open": results.get("open", []),
             "open_or_filtered": results.get("open_or_filtered", []),
