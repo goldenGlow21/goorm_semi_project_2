@@ -11,6 +11,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 SCAN_FUNCTIONS = {
     "tcp_connect": connection_scan,
     "tcp_syn": syn_scan,
+    "tcp_fin": stealth_scan,
     "udp": udp_scan,
     "xmas": stealth_scan,
     "null": stealth_scan,
