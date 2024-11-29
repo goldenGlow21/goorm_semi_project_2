@@ -26,7 +26,7 @@ def scan():
     # 유효성 검사
     if not target_ip or not isinstance(target_ip, str):
         return jsonify({"error": "Invalid or missing IP address"}), 400
-    if scan_type not in ["tcp_connect", "tcp_syn", "udp", "xmas", "null", "ack"]:
+    if scan_type not in ["tcp_connect", "tcp_syn", "tcp_fin", "udp", "xmas", "null", "ack"]:
         return jsonify({"error": f"Unsupported scan type: {scan_type}"}), 400
     try:
         start_port = int(start_port)
