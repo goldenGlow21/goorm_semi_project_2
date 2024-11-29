@@ -31,7 +31,7 @@ def scan():
     try:
         start_port = int(start_port)
         end_port = int(end_port)
-        if not (1 <= start_port <= 65535 and 1 <= end_port <= 65535):
+        if not (1 <= start_port <= 65535 and 1 <= end_port <= 65535 and start_port <= end_port):
             raise ValueError
     except ValueError:
         return jsonify({"error": "Invalid port range"}), 400
