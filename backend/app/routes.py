@@ -2,8 +2,15 @@ from flask import Blueprint, request, jsonify, render_template
 from app.scanner import scan_ports
 from app.log_manager import add_scan_log, get_scan_logs
 from datetime import datetime
+from modules.common import get_ip_from_domain
+import re
 
 bp = Blueprint("main", __name__)
+
+# 정규식으로 IPv4 주소 확인
+def is_valid_ip(ip):
+    ip_regex = r"^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$"
+    return re.match(ip_regex, ip) is not None
 
 @bp.route("/", methods=["GET"])
 def home():
@@ -18,14 +25,25 @@ def scan():
     포트 스캔 요청 처리
     """
     data = request.get_json()
-    target_ip = data.get("target_ip")
+    target_ip_or_domain = data.get("target_ip")
     scan_type = data.get("scan_type")
     start_port = data.get("target_start_port", 1)
     end_port = data.get("target_end_port", 65535)
 
     # 유효성 검사
-    if not target_ip or not isinstance(target_ip, str):
-        return jsonify({"error": "Invalid or missing IP address"}), 400
+    if not target_ip_or_domain or not isinstance(target_ip_or_domain, str):
+        return jsonify({"error": "Invalid or missing IP address or domain"}), 400
+    
+    # 입력값이 IP인지 도메인인지 확인
+    if is_valid_ip(target_ip_or_domain):
+        target_ip = target_ip_or_domain  # IP라면 그대로 사용
+    else:
+        try:
+            # 도메인일 경우 IP로 변환
+            target_ip = get_ip_from_domain(target_ip_or_domain)
+        except Exception as e:
+            return jsonify({"error": f"Failed to resolve domain to IP: {str(e)}"}), 400
+
     if scan_type not in ["tcp_connect", "tcp_syn", "tcp_fin", "udp", "xmas", "null", "ack"]:
         return jsonify({"error": f"Unsupported scan type: {scan_type}"}), 400
     try:
