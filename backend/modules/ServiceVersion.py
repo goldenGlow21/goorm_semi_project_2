@@ -2,6 +2,10 @@ import re
 import socket
 import time
 from typing import Dict, Optional, List
+from multiprocessing import Pool, cpu_count
+
+
+
 
 class ServiceProbeParser:
     def __init__(self, probe_file_path):
@@ -88,6 +92,12 @@ class ServiceProbeParser:
 class ServiceScanner:
     def __init__(self, service_parser):
         self.parser = service_parser
+    # 멀티프로세싱
+    def multi_processing_scan(self, target_ip, ports):
+        num_processes = cpu_count()
+        with Pool(num_processes) as pool:
+            result = pool.starmap(self.scan_port, [(target_ip, port) for port in ports])
+        return result
 
     def scan_port(self, ip: str, port: int, timeout: float = 2) -> Dict:
         result = {
@@ -187,26 +197,29 @@ class ServiceScanner:
         
         return None
 
+
+
 def main():
     try:
         print("Service Version Scanner")
         print("=" * 50)
-        
+
         TARGET_IP = "13.125.143.118"
         TARGET_PORTS = [21, 22, 80, 443, 3306, 8000, 8080]
-        
+
         parser = ServiceProbeParser('nmap-service-probes.txt')
         scanner = ServiceScanner(parser)
-        
+
         print(f"\n대상 IP: {TARGET_IP}")
         print(f"스캔할 포트: {TARGET_PORTS}")
         print("\n스캔을 시작합니다...")
         start_time = time.time()
-        
-        for port in TARGET_PORTS:
-            print(f"\n포트 {port} 스캔 중...")
-            result = scanner.scan_port(TARGET_IP, port)
-            
+
+        # 멀티프로세싱
+        results = scanner.multi_processing_scan(TARGET_IP, TARGET_PORTS)
+
+        for result in results:
+            print(f"포트: {result['port']}")
             print(f"상태: {result['state']}")
             if result['state'] == 'open':
                 print(f"서비스: {result['service'] or '알 수 없음'}")
@@ -216,10 +229,11 @@ def main():
                     print(f"추가 정보: {result['info']}")
             elif result['state'] == 'error':
                 print(f"에러: {result.get('error', '알 수 없는 에러')}")
-                
+            print("")
+
         scan_time = time.time() - start_time
         print(f"\n스캔 완료 (소요시간: {scan_time:.2f}초)")
-        
+
     except KeyboardInterrupt:
         print("\n\n스캔이 사용자에 의해 중단되었습니다.")
     except Exception as e:
