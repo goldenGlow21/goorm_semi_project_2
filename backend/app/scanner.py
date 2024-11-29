@@ -1,21 +1,21 @@
-from modules.tcp_ack_scan import ack_scan
-from modules.tcp_connection_scan import connection_scan
-from modules.tcp_syn_scan import syn_scan
+from modules.tcp_ack_scan import multi_ack_scan
+from modules.tcp_connection_scan import multi_connection_scan
+from modules.tcp_syn_scan import multi_syn_scan
 from modules.tcp_stealth_scan import multi_stealth_scan
-from modules.udp_scan import udp_scan
+from modules.udp_scan import multi_udp_scan
 import sys, os
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 # 스캔 수행 함수 매핑
 SCAN_FUNCTIONS = {
-    "tcp_connect": connection_scan,
-    "tcp_syn": syn_scan,
+    "tcp_connect": multi_connection_scan,
+    "tcp_syn": multi_syn_scan,
     "tcp_fin": multi_stealth_scan,
-    "udp": udp_scan,
+    "udp": multi_udp_scan,
     "xmas": multi_stealth_scan,
     "null": multi_stealth_scan,
-    "ack": ack_scan,
+    "ack": multi_ack_scan,
 }
 
 def scan_ports(ip: str, start_port: int, end_port: int, scan_type: str):
