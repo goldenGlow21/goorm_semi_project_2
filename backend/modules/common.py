@@ -3,7 +3,7 @@ import random
 from contextlib import closing
 from urllib.parse import urlparse
 
-def get_port():
+def get_available_port():
     max_try = 10
     with closing(socket.socket(socket.AF_INET, socket.SOCK_STREAM)) as sock:
         for _ in range(max_try):

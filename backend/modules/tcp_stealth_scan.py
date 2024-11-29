@@ -6,7 +6,7 @@ from concurrent.futures import ThreadPoolExecutor
 from multiprocessing import Pool, cpu_count
 from scapy.all import sr1, conf  # from scapy.all import IP, TCP, sr1, conf
 from scapy.layers.inet import IP, TCP
-from .common import get_port
+from .common import get_available_port
 
 LOCK = threading.Lock() # 뮤텍스 락
 CPU_CORES = cpu_count()
@@ -15,7 +15,7 @@ CPU_CORES = cpu_count()
 def stealth_scan(flag, target, port):
     conf.verb = 0  # 디버깅 메시지 0이면 출력 안함 1이면 출력 함
     with LOCK:
-        random_port = get_port()
+        random_port = get_available_port()
     # stealth 패킷 생성
     if flag == "F":
         packet = IP(dst=target) / TCP(sport=random_port, dport=port, flags="F") # / ip와 tcp를 묶는 연산자

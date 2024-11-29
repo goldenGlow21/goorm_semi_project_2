@@ -6,7 +6,7 @@ from concurrent.futures import ThreadPoolExecutor
 from multiprocessing import Pool, cpu_count
 from scapy.all import send, sr1, conf  # from scapy.all import IP, TCP, sr1, conf
 from scapy.layers.inet import IP, TCP
-from .common import get_port
+from .common import get_available_port
 
 LOCK = threading.Lock() # 뮤텍스 락
 CPU_CORES = cpu_count()
@@ -14,7 +14,7 @@ CPU_CORES = cpu_count()
 # syn 스캔 함수
 def syn_scan(target_ip, port):
     conf.verb = 0  # 출력 억제
-    packet = IP(dst=target_ip) / TCP(sport=get_port(), dport=port, flags="S")  # / ip와 tcp를 묶는 연산자
+    packet = IP(dst=target_ip) / TCP(sport=get_available_port(), dport=port, flags="S")  # / ip와 tcp를 묶는 연산자
     # 패킷 전송 및 응답 수신 sr1함수는 패킷을 전송하고 첫 번째 응답을 기다리는 함수
     response = sr1(packet, timeout=1)
 

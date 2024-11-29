@@ -6,7 +6,7 @@ from concurrent.futures import ThreadPoolExecutor
 from multiprocessing import Pool, cpu_count
 from scapy.all import sr1, conf  # from scapy.all import IP, TCP, sr1, conf
 from scapy.layers.inet import IP, UDP, ICMP
-from .common import get_port
+from .common import get_available_port
 
 LOCK = threading.Lock() # 뮤텍스 락
 CPU_CORES = cpu_count()
@@ -15,7 +15,7 @@ CPU_CORES = cpu_count()
 def udp_scan(target_ip, port):
     conf.verb = 0  # 디버깅 메시지 0이면 출력 안함 1이면 출력 함
     with LOCK:
-        random_port = get_port()
+        random_port = get_available_port()
     # UDP 패킷 생성
     packet = IP(dst=target_ip) / UDP(sport=random_port, dport=port) # / ip와 tcp를 묶는 연산자
     # 패킷 전송 및 응답 수신 sr1함수는 패킷을 전송하고 첫 번째 응답을 기다리는 함수
