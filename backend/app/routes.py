@@ -39,6 +39,15 @@ def scan():
     # 스캔 수행
     try:
         scan_results = scan_ports(target_ip, start_port, end_port, scan_type)
+
+        # 반환 값이 리스트일 경우 처리
+        if isinstance(scan_results, list):
+            scan_results = {
+                "open_ports": scan_results,  # 열린 포트를 "open_ports" 키로 매핑
+                "total_ports_scanned": len(scan_results),  # 추가 정보: 스캔된 포트 개수
+            }
+
+        # 공통 메타데이터 추가
         scan_results["ip"] = target_ip
         scan_results["scan_type"] = scan_type
         scan_results["scan_time"] = datetime.utcnow().isoformat() + "Z"
