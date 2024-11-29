@@ -7,15 +7,15 @@ const ScanResult = () => {
   const data = location.state || {};
 
   const defaultData = { 
-    IP: "Unknown", 
-    open: [], 
+    ip: "Unknown", 
+    open_ports: [], 
     open_or_filtered: [], 
     scan_type: "Unknown", 
     scan_time: "Unknown" 
   };
 
   // 타입에 따라 데이터를 통일
-  const unifiedData = data.type === "scanResults" || data.type === "recentScan" 
+  const unifiedData = data.type === "scanResult" || data.type === "recentScan" 
     ? { ...defaultData, ...data } 
     : defaultData;
 
@@ -23,16 +23,19 @@ const ScanResult = () => {
   const navigate = useNavigate();
 
   const renderContent = () => {
+    console.log("전달받은 데이터", data); //여기서도 안 나옴
+    console.log("합쳐진 데이터", unifiedData);
+
     switch (selectedMenu) {
       // 받을 json { IP : "192.168.1.1, open : [23, 44 ~~], open_or_filtered : [24, 25, 12], "scan_type": "tcp_connect", "scan_time": "2024-11-25T15:00:00Z" }
       // 여기에 추가 기능들 OS + 서비스, 취약점
       case "IP":
-        return <p>{ unifiedData.IP || "IP 데이터가 없습니다."}</p>;
+        return <p>{ unifiedData.ip || "IP 데이터가 없습니다."}</p>;
       case "Open Ports":
         return (
           <ul>
-            { unifiedData.open.length > 0 
-              ? unifiedData.open.map((port, index) => <li key={index}>{port}</li>)
+            { unifiedData.open_ports.length > 0 
+              ? unifiedData.open_ports.map((port, index) => <li key={index}>{port}</li>)
               : <li>열린 포트가 없습니다.</li>
             }
           </ul>

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { TextField, Menu, MenuItem, Typography, Button, Box } from "@mui/material";
 import BasicHelpPopover from "./component/Help";
@@ -34,11 +34,11 @@ const categories = {
 };
 
 const MainBoard = () => {
-  const [targetIP, setTargetIP] = useState("");
-  const [targetStartPort, setTargetStartPort] = useState("");
-  const [targetEndPort, setTargetEndPort] = useState("");
-  const [scanType, setScanType] = useState(null); // 여기까지 제출 데이터
-  const [scanResult, setScanResult] = useState(null);
+  const [target_ip, setTargetIP] = useState("");
+  const [target_start_port, setTargetStartPort] = useState("");
+  const [target_end_port, setTargetEndPort] = useState("");
+  const [scan_type, setScanType] = useState(null); // 여기까지 제출 데이터
+  const [scanResult, setScanResult] = useState();
   const [error, setError] = useState(null);
   const [showResult, setShowResult] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
@@ -69,10 +69,10 @@ const MainBoard = () => {
     setError(null);
 
     const userData = {
-      targetIP,
-      targetStartPort,
-      targetEndPort,
-      scanType,
+      target_ip,
+      target_start_port,
+      target_end_port,
+      scan_type,
     };
 
     try {
@@ -84,16 +84,15 @@ const MainBoard = () => {
 
       if (response.status === 200) {
         const scanData = await response.json();
+        setShowResult(true);
         setScanResult(scanData);
+        navigate("/scanResult", { state: { ...scanData, type: "scanResult" } });
       } else {
         throw new Error("Failed to fetch scan results.");
       }
     } catch (err) {
       console.error("Error during scan:", err);
       setError("스캔 중 문제가 발생했습니다.");
-    } finally {
-      setShowResult(true);
-      navigate("/scanResult", { state: { ...scanResult, type: "scanResult" } });
     }
   };
 
@@ -136,7 +135,7 @@ const MainBoard = () => {
             className="input-box"
             type="number"
             placeholder="Start Port"
-            value={targetStartPort}
+            value={target_start_port}
             onChange={(e) => setTargetStartPort(e.target.value)}
             style={{ marginRight: "10px" }}
             sx={textFieldStyles}
@@ -144,8 +143,8 @@ const MainBoard = () => {
           <TextField
             className="input-box"
             type="number"
-            placeholder="Last Port"
-            value={targetEndPort}
+            placeholder="End Port"
+            value={target_end_port}
             onChange={(e) => setTargetEndPort(e.target.value)}
             sx={textFieldStyles}
           />
@@ -160,7 +159,7 @@ const MainBoard = () => {
                 variant="contained"
                 onClick={(e) => handleCategoryClick(e, key)}
               >
-                {activeCategory === key ? `선택: ${scanType || "없음"}` : category.label}
+                {activeCategory === key ? `선택: ${scan_type || "없음"}` : category.label}
               </Button>
               <Menu
                 anchorEl={anchorEl}
@@ -180,7 +179,7 @@ const MainBoard = () => {
 
         {/* 선택된 옵션 */}
         <Typography variant="body1" className="selected-option">
-          Selected Option: {scanType}
+          Selected Option: {scan_type}
         </Typography>
 
         {/* 스캔 버튼 */}
