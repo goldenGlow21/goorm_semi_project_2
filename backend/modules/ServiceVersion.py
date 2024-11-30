@@ -60,6 +60,10 @@ class ServiceProbeParser:
             pattern_end = line.index('|', pattern_start)
             pattern = line[pattern_start:pattern_end]
 
+            flags = re.IGNORECASE | re.DOTALL
+            if 's' in line[pattern_end + 1:pattern_end + 3]:
+                flags |= re.DOTALL
+
             version_info = {}
             remaining = line[pattern_end + 1:]
 
@@ -80,14 +84,33 @@ class ServiceProbeParser:
                 info_match = re.search(r'i/([^/]+)/', remaining)
                 if info_match:
                     version_info['info'] = info_match.group(1)
+            if 'cpe:/' in remaining:
+                cpe_match = re.search(r'cpe:/([^/\s]+(?:/[^/\s]+)*)', remaining)
+                if cpe_match:
+                    cpe_str = 'cpe:' + cpe_match.group(1)
+                    # Remove trailing '/a' if present
+                    cpe_str = cpe_str.replace('/a', '')
+                    version_info['cpe'] = cpe_str
+
+            binary_pattern = self._convert_pattern_to_binary(pattern)
 
             return {
                 'pattern': pattern,
-                'pattern_compiled': re.compile(pattern, re.IGNORECASE | re.DOTALL),
+                'binary_pattern': binary_pattern,
+                'pattern_compiled': re.compile(pattern, flags),
                 'version_info': version_info
             }
         except Exception:
             return None
+
+    def _convert_pattern_to_binary(self, pattern: str) -> bytes:
+        try:
+            pattern = re.sub(r'\\x([0-9a-fA-F]{2})', lambda m: chr(int(m.group(1), 16)), pattern)
+            pattern = pattern.replace('\\0', '\0')
+            pattern = pattern.encode('latin1').decode('unicode-escape').encode('latin1')
+            return pattern
+        except:
+            return pattern.encode('latin1')
 
 
 class ServiceScanner:
@@ -107,23 +130,22 @@ class ServiceScanner:
             'state': 'closed',
             'service': None,
             'version': None,
+            'cpe': None,
             'info': None
         }
 
         try:
-            # Initial connection test
-            sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            sock.settimeout(timeout)
-            if sock.connect_ex((ip, port)) == 0:
-                result['state'] = 'open'
-                sock.close()
+            with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
+                sock.settimeout(timeout)
+                if sock.connect_ex((ip, port)) == 0:
+                    result['state'] = 'open'
 
-                # Try each probe
-                for probe in self.parser.probes:
-                    service_info = self._try_probe(ip, port, probe, timeout)
-                    if service_info:
-                        result.update(service_info)
-                        break
+                    # Try each probe
+                    for probe in self.parser.probes:
+                        service_info = self._try_probe(ip, port, probe, timeout)
+                        if service_info:
+                            result.update(service_info)
+                            break
 
         except socket.error as e:
             result['state'] = 'error'
@@ -142,33 +164,65 @@ class ServiceScanner:
                     probe_bytes = self._format_probe_string(probe['probe_string'])
                     sock.send(probe_bytes)
 
-                # Receive response
-                response = sock.recv(4096)
+                response = self._receive_with_timeout(sock, timeout)
 
                 # Try to match response against all patterns
-                service_info = self._match_response(response, probe['matches'])
-                if service_info:
-                    return service_info
+                if response:
+                    return self._match_response(response, probe['matches'])
 
         except socket.error:
             pass
 
         return None
 
+    def _receive_with_timeout(self, sock: socket.socket, timeout: float) -> bytes:
+        total_data = b''
+        start_time = time.time()
+
+        while True:
+            if time.time() - start_time > timeout:
+                break
+
+            try:
+                sock.settimeout(0.5)
+                data = sock.recv(2048)
+                if not data:
+                    break
+                total_data += data
+                if len(total_data) > 4096:
+                    break
+            except socket.timeout:
+                break
+            except socket.error:
+                break
+
+        return total_data
+
     def _format_probe_string(self, probe_string: str) -> bytes:
         if not probe_string:
             return b""
-        return bytes(probe_string, 'utf-8').decode('unicode-escape').encode()
+        try:
+            probe_string = probe_string.replace('\\n', '\n').replace('\\r', '\r')
+            return bytes(probe_string, 'utf-8').decode('unicode-escape').encode()
+        except:
+            return probe_string.encode()
 
     def _match_response(self, response: bytes, matches: List[Dict]) -> Optional[Dict]:
-        try:
-            response_str = response.decode('utf-8', errors='ignore')
-        except:
-            response_str = response.hex()
-
         for match in matches:
             try:
-                pattern_match = match['pattern_compiled'].search(response_str)
+                # Try binary pattern matching
+                pattern_match = None
+                response_str = None
+
+                if match['binary_pattern']:
+                    if re.search(match['binary_pattern'], response, re.DOTALL):
+                        response_str = response.decode('latin1', errors='ignore')
+                        pattern_match = match['pattern_compiled'].search(response_str)
+
+                if not pattern_match:
+                    response_str = response.decode('latin1', errors='ignore')
+                    pattern_match = match['pattern_compiled'].search(response_str)
+
                 if pattern_match:
                     version_info = match['version_info'].copy()
                     service_info = {}
@@ -177,7 +231,7 @@ class ServiceScanner:
                     if 'service' in version_info:
                         service_info['service'] = version_info['service']
 
-                    # Extract version information
+                    # Extract version
                     if 'version_pattern' in version_info:
                         version_str = version_info['version_pattern']
                         for i, group in enumerate(pattern_match.groups(), 1):
@@ -185,7 +239,15 @@ class ServiceScanner:
                                 version_str = version_str.replace(f'${i}', group)
                         service_info['version'] = version_str
 
-                    # Extract additional information
+                    # Extract CPE
+                    if 'cpe' in version_info:
+                        cpe_str = version_info['cpe']
+                        for i, group in enumerate(pattern_match.groups(), 1):
+                            if group:
+                                cpe_str = cpe_str.replace(f'${i}', group)
+                        service_info['cpe'] = self.search_cves(cpe_str)
+
+                    # Extract additional info
                     if 'info' in version_info:
                         info_str = version_info['info']
                         for i, group in enumerate(pattern_match.groups(), 1):
@@ -194,22 +256,23 @@ class ServiceScanner:
                         service_info['info'] = info_str
 
                     return service_info
+
             except Exception:
                 continue
 
         return None
 
     def search_cves(self, cpe23, limit=10):
+        cpe23 = cpe23.replace(":", ":2.3:", 1)
         results = []
         url = "https://cvedb.shodan.io/cves"
         params = {
             "cpe23": cpe23,
             "sort_by_epss": "true",
-            "limit" : limit
+            "limit": limit
         }
         response = requests.get(url, params=params)
         if response.status_code != 200:
-            print(f"SEARCH CVES ERROR" + response.text)
             return None
         cves = response.json()
         for cve in cves.get("cves"):
@@ -226,7 +289,6 @@ class ServiceScanner:
         return results
 
 
-
 def main():
     try:
         print("Service Version Scanner")
@@ -241,23 +303,24 @@ def main():
         print(f"\n대상 IP: {TARGET_IP}")
         print(f"스캔할 포트: {TARGET_PORTS}")
         print("\n스캔을 시작합니다...")
+
         start_time = time.time()
 
-        # 멀티프로세싱
-        results = scanner.multi_processing_scan(TARGET_IP, TARGET_PORTS)
+        for port in TARGET_PORTS:
+            print(f"\n포트 {port} 스캔 중...")
+            result = scanner.scan_port(TARGET_IP, port)
 
-        for result in results:
-            print(f"포트: {result['port']}")
             print(f"상태: {result['state']}")
             if result['state'] == 'open':
                 print(f"서비스: {result['service'] or '알 수 없음'}")
                 if result.get('version'):
                     print(f"버전: {result['version']}")
+                if result.get('cpe'):
+                    print(f"CPE: {result['cpe']}")
                 if result.get('info'):
                     print(f"추가 정보: {result['info']}")
             elif result['state'] == 'error':
                 print(f"에러: {result.get('error', '알 수 없는 에러')}")
-            print("")
 
         scan_time = time.time() - start_time
         print(f"\n스캔 완료 (소요시간: {scan_time:.2f}초)")
@@ -270,3 +333,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+    # scan = ServiceScanner("nmap-service-probes.txt")
+    # print(scan.search_cves("cpe:a:openbsd:openssh:8.7"))
