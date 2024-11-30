@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify, render_template
 from app.scanner import scan_ports
-from app.log_manager import add_scan_log, get_scan_logs
+from app.log_manager import add_scan_log, add_service_log, get_scan_logs
 from datetime import datetime
 from modules.common import get_ip_from_domain
 import re
@@ -56,11 +56,17 @@ def scan():
 
     # 스캔 수행
     try:
-        scan_results = scan_ports(target_ip, start_port, end_port, scan_type)
-
-        # "additional_info" 스캔은 결과를 그대로 반환
         if scan_type == "additional_info":
+            # CVE 정보 포함 스캔 수행
+            scan_results = scan_ports(target_ip, start_port, end_port, scan_type)
+
+            # 결과를 service_log.json에 기록
+            for result in scan_results:
+                add_service_log(result)
+
             return jsonify(scan_results)
+
+        scan_results = scan_ports(target_ip, start_port, end_port, scan_type)
 
         # 반환 값이 리스트일 경우 처리
         if isinstance(scan_results, list):

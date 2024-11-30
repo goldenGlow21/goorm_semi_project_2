@@ -3,13 +3,14 @@ import os
 import threading
 
 LOG_FILE_PATH = os.path.join(os.path.dirname(__file__), "../scan_logs.json")
+SERVICE_LOG_FILE_PATH = os.path.join(os.path.dirname(__file__), "../service_logs.json")
 log_lock = threading.Lock()  # 파일 접근 동시성을 위한 Lock 객체
 
-def initialize_log_file():
+def initialize_log_file(log_path):
     """로그 파일이 없을 경우 초기화"""
-    if not os.path.exists(LOG_FILE_PATH):
+    if not os.path.exists(log_path):
         with log_lock:  # 파일 쓰기 작업에 Lock 적용
-            with open(LOG_FILE_PATH, "w") as log_file:
+            with open(log_path, "w") as log_file:
                 json.dump([], log_file)
 
 def add_scan_log(entry):
@@ -17,11 +18,7 @@ def add_scan_log(entry):
     스캔 결과를 로그 파일에 추가
     :param entry: 스캔 결과 딕셔너리
     """
-    initialize_log_file()
-
-    # additional_info 타입은 로그를 남기지 않음
-    if entry.get("scan_type") == "additional_info":
-        return
+    initialize_log_file(LOG_FILE_PATH)
 
     # 로그 형식 변환
     log_entry = {
@@ -39,21 +36,26 @@ def add_scan_log(entry):
     except json.JSONDecodeError:
         logs = []
 
-    logs.append(entry)
+    logs.append(log_entry)
 
     with open(LOG_FILE_PATH, "w") as log_file:
-        json.dump(logs, log_file, indent=4, separators=(",", ": ")) # 줄바꿈 없이 한 줄로 리스트를 저장
+        json.dump(logs, log_file, indent=4, separators=(",", ": "))
 
-def get_scan_logs():
+def add_service_log(entry):
     """
-    로그 파일에서 모든 스캔 기록을 반환
-    :return: 스캔 기록 리스트
+    서비스/OS 탐지 결과를 별도 로그 파일에 추가
+    :param entry: 서비스/OS 탐지 결과 딕셔너리
     """
-    initialize_log_file()
+    initialize_log_file(SERVICE_LOG_FILE_PATH)
+
     try:
-        with log_lock:  # 파일 읽기 작업 보호
-            with open(LOG_FILE_PATH, "r") as log_file:
+        with log_lock:  # 파일 읽기/쓰기 작업 보호
+            with open(SERVICE_LOG_FILE_PATH, "r") as log_file:
                 logs = json.load(log_file)
     except json.JSONDecodeError:
         logs = []
-    return logs
+
+    logs.append(entry)
+
+    with open(SERVICE_LOG_FILE_PATH, "w") as log_file:
+        json.dump(logs, log_file, indent=4, separators=(",", ": "))
