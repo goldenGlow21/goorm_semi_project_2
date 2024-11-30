@@ -1,8 +1,8 @@
-from modules.tcp_ack_scan import hybrid_ack_scan
-from modules.tcp_connection_scan import hybrid_connection_scan
-from modules.tcp_syn_scan import hybrid_syn_scan
-from modules.tcp_stealth_scan import hybrid_stealth_scan
-from modules.udp_scan import hybrid_udp_scan
+from modules.tcp_ack_scan import multi_ack_scan
+from modules.tcp_connection_scan import multi_connection_scan
+from modules.tcp_syn_scan import multi_syn_scan
+from modules.tcp_stealth_scan import multi_stealth_scan
+from modules.udp_scan import multi_udp_scan
 from modules.ServiceVersion import ServiceProbeParser, ServiceScanner
 import sys, os
 
@@ -15,13 +15,13 @@ service_scanner = ServiceScanner(service_parser)
 
 # 스캔 수행 함수 매핑
 SCAN_FUNCTIONS = {
-    "tcp_connect": hybrid_connection_scan,
-    "tcp_syn": hybrid_syn_scan,
-    "tcp_fin": hybrid_stealth_scan,
-    "udp": hybrid_udp_scan,
-    "xmas": hybrid_stealth_scan,
-    "null": hybrid_stealth_scan,
-    "ack": hybrid_ack_scan,
+    "tcp_connect": multi_connection_scan,
+    "tcp_syn": multi_syn_scan,
+    "tcp_fin": multi_stealth_scan,
+    "udp": multi_udp_scan,
+    "xmas": multi_stealth_scan,
+    "null": multi_stealth_scan,
+    "ack": multi_ack_scan,
     "additional_info": service_scanner.scan_port,
 }
 
