@@ -245,7 +245,7 @@ class ServiceScanner:
                         for i, group in enumerate(pattern_match.groups(), 1):
                             if group:
                                 cpe_str = cpe_str.replace(f'${i}', group)
-                        service_info['cpe'] = self.search_cves(cpe_str)
+                        service_info['cves'] = self.search_cves(cpe_str)
 
                     # Extract additional info
                     if 'info' in version_info:
@@ -315,8 +315,8 @@ def main():
                 print(f"서비스: {result['service'] or '알 수 없음'}")
                 if result.get('version'):
                     print(f"버전: {result['version']}")
-                if result.get('cpe'):
-                    print(f"CPE: {result['cpe']}")
+                if result.get('cves'):
+                    print(f"CVES: {result['cves']}")
                 if result.get('info'):
                     print(f"추가 정보: {result['info']}")
             elif result['state'] == 'error':
@@ -333,5 +333,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-    # scan = ServiceScanner("nmap-service-probes.txt")
-    # print(scan.search_cves("cpe:a:openbsd:openssh:8.7"))
