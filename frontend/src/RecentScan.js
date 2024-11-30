@@ -36,29 +36,13 @@ const RecentScan = () => {
   };
 
   return (
-    <div
-      className="scan-result-container"
-      style={{ padding: 3, backgroundColor: "#f5f5f5", minHeight: "100vh" }}
-    >
-      {/* Header Section */}
-      <Box
-        className="header"
-        sx={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          backgroundColor: "#1976d2",
-          padding: 2,
-          borderRadius: 1,
-          marginBottom: 3,
-        }}
-      >
-        <Box className="logo" sx={{ display: "flex", alignItems: "center" }}>
-          <img src="/goormton.png" alt="Logo" style={{ height: "50px", marginRight: "10px" }}/>
-          <Typography variant="h5" color="white">
-            Port Scanning Project
-          </Typography>
-        </Box>
+    <div className="scan-result-container">
+      {/* 상단 헤더 */}
+      <header className="header">
+        <div className="logo">
+          <img src="/goormton.png" alt="Logo" />
+        </div>
+        <h1>Port Scanning Project</h1>
         <Box>
           <Button variant="contained" color="secondary" onClick={fetchRecentScanData} sx={{ marginRight: 1 }}>
             Reload
@@ -67,10 +51,11 @@ const RecentScan = () => {
             MainBoard
           </Button>
         </Box>
-      </Box>
+      </header>
+      <div className="divider"></div>
 
       {/* Table Section */}
-      <div>
+      <div className="table-container">
         <h1>Recent Scans</h1>
         {error
          ? ( <Typography color="error">{error}</Typography> )
