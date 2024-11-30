@@ -26,8 +26,8 @@ def ack_scan(target_ip, port):
     # 패킷 전송 및 응답 수신 sr1함수는 패킷을 전송하고 첫 번째 응답을 기다리는 함수
     response = sr1(packet, timeout=1)
     if response is None:
-        return port
-    elif response.haslayer(ICMP) and response[ICMP].type == 3:
+        pass
+    elif response.haslayer(TCP) and response[TCP].flags == 0x4:  # SYN/ACK응답 == 포트 열림
         return port
     time.sleep(0)  # 속도 조절 시 사용할 것
 
@@ -37,9 +37,9 @@ def multi_ack_scan(target_ip, start_port, end_port):
     random.shuffle(random_ports)
     with ThreadPoolExecutor(max_workers=CPU_CORES * 2) as executor:
         results = list(executor.map(lambda port: ack_scan(target_ip, port), random_ports))
-    filtered_ports = list(filter(None, results)) # 필터링된 포트
-    filtered_ports.sort()
-    return filtered_ports
+    unfiltered_ports = list(filter(None, results)) # 필터링된 포트
+    unfiltered_ports.sort()
+    return unfiltered_ports
 
 # 멀티스레딩 작업자 함수
 def thread_ack_worker_for_processing(args):
@@ -67,9 +67,9 @@ def hybrid_ack_scan(target_ip, start_port, end_port):
         results = pool.map(thread_ack_worker_for_processing, args)
 
     # 결과 합치기
-    filtered_ports = [port for sublist in results for port in sublist]
-    filtered_ports.sort()
-    return filtered_ports
+    unfiltered_ports = [port for sublist in results for port in sublist]
+    unfiltered_ports.sort()
+    return unfiltered_ports
 
 
 if __name__ == "__main__":
@@ -81,10 +81,10 @@ if __name__ == "__main__":
     start_port = int(sys.argv[2])
     end_port = int(sys.argv[3])
     start = time.time()
-    filtered_ports = hybrid_ack_scan(target_ip, start_port, end_port)
+    unfiltered_ports = hybrid_ack_scan(target_ip, start_port, end_port)
     print(f"{time.time() - start:.5f}sec")
 
-    if filtered_ports:
-        print(f"방화벽 총 {len(filtered_ports)}개 설정 됨 : {filtered_ports}")
+    if unfiltered_ports:
+        print(f"방화벽 총 {len(unfiltered_ports)}개 열림 : {unfiltered_ports}")
     else:
-        print("방화벽 설정 안됨")
+        print("방화벽 다 설정됨")

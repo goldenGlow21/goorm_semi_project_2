@@ -17,7 +17,6 @@ add_definitions(${GLIB2_CFLAGS_OTHER})
 include_directories(c_modules)
 add_library(c_modules SHARED
         common.c
-        thpool.c
         ack_scan.c
         null_scan.c
         tcp_connect.c
