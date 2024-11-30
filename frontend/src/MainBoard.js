@@ -45,7 +45,7 @@ const MainBoard = () => {
   const [target_ip, setTargetIP] = useState("");
   const [target_start_port, setTargetStartPort] = useState("");
   const [target_end_port, setTargetEndPort] = useState("");
-  const [scan_type, setScanType] = useState(null); // 여기까지 제출 데이터
+  const [scan_type, setScanType] = useState(null);  // 여기까지 제출 데이터
   const [scanResult, setScanResult] = useState();
   const [error, setError] = useState(null);
   const [showResult, setShowResult] = useState(false);
@@ -83,7 +83,7 @@ const MainBoard = () => {
       target_ip,
       target_start_port,
       target_end_port,
-      scan_type,
+      scan_type
     };
 
     try {
@@ -144,7 +144,7 @@ const MainBoard = () => {
           sx={textFieldStyles}
         />
 
-        {/* Port 입력 필드 */}
+        {/* Port 및 Shodan API 입력 필드 */}
         <div>
           <TextField
             className="input-box"

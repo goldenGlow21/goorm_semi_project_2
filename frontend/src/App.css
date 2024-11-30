@@ -43,7 +43,7 @@ body {
 }
 
 .container .main-content .input-box {
-  width: 40%;
+  width: 30%;
   padding: 10px;
   border-radius: 10px;
   border: none;
@@ -175,8 +175,7 @@ body {
 }
 
 .scan-result-container .header h1 {
-  margin-left: 500px;
-  margin-right: 300px;
+  margin-left: 200px;
   font-size: 24px;
   color: #00bfff;
 }
@@ -256,19 +255,10 @@ body {
 
 /* 아래부턴 Recent Scan */
 
-.scan-result-container .header .reload-button {
-  background-color: #00bfff;
-  color: #000;
-  border: none;
-  padding: 10px 15px;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background 0.3s;
-}
-
 /* 테이블 스타일 */
 .scan-result-container .table-container {
   margin-top: 20px;
+  margin-left: 50px;
 }
 
 .scan-result-container .table-container .table {

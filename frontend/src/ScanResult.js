@@ -24,38 +24,73 @@ const ScanResult = () => {
   const navigate = useNavigate();
 
   const renderContent = () => {
-
     switch (selectedMenu) {
       case "IP":
-        return <p>{ unifiedData.ip || "IP 데이터가 없습니다."}</p>;
+        return (
+          <li>
+            <strong>IP:</strong> {unifiedData.ip || "IP 데이터가 없습니다."}
+          </li>
+        );
+
       case "Open Ports":
         return (
-          <ul>
-            { unifiedData.open_ports.length > 0 
-              ? unifiedData.open_ports.map((port, index) => <li key={index}>{port}</li>)
-              : <li>열린 포트가 없습니다.</li>
-            }
-          </ul>
+          <li>
+            <strong>Open Ports:</strong>
+            <ul>
+              {unifiedData.open_ports && unifiedData.open_ports.length > 0 ? (
+                unifiedData.open_ports.map((port, index) => (
+                  <li key={index}>Port {port}</li>
+                ))
+              ) : (
+                <li>열린 포트가 없습니다.</li>
+              )}
+            </ul>
+          </li>
         );
+
       case "Open or Filtered Ports":
         return (
-          <ul>
-            { unifiedData.open_or_filtered.length > 0
-              ? unifiedData.open_or_filtered.map((port, index) => <li key={index}>{port}</li>)
-              : <li>열리거나 필터링된 포트가 없습니다.</li>
-            }
-          </ul>
+          <li>
+            <strong>Open or Filtered Ports:</strong>
+            <ul>
+              {unifiedData.open_or_filtered &&
+              unifiedData.open_or_filtered.length > 0 ? (
+                unifiedData.open_or_filtered.map((port, index) => (
+                  <li key={index}>Port {port}</li>
+                ))
+              ) : (
+                <li>열리거나 필터링된 포트가 없습니다.</li>
+              )}
+            </ul>
+          </li>
         );
+
       case "Scan Type":
-        return <p>{unifiedData.scan_type || "스캔 타입 정보가 없습니다."}</p>;
+        return (
+          <li>
+            <strong>Scan Type:</strong> {unifiedData.scan_type || "스캔 타입 정보가 없습니다."}
+          </li>
+        );
+
       case "Scan Time":
-        return <p>{unifiedData.scan_time || "스캔 시간 정보가 없습니다."}</p>;
+        return (
+          <li>
+            <strong>Scan Time:</strong> {unifiedData.scan_time || "스캔 시간 정보가 없습니다."}
+          </li>
+        );
+
       case "Additional Information":
-        return <p>{unifiedData.additional_info || "추가 정보가 없습니다."}</p>;
+        return (
+          <li>
+            <strong>Additional Information:</strong> {unifiedData.additional_info || "추가 정보가 없습니다."}
+          </li>
+        );
+
       default:
-        return <p>메뉴를 선택하세요.</p>;
+        return <li>메뉴를 선택하세요.</li>;
     }
-  };
+  }
+
 
   return (
     <div className="scan-result-container">
