@@ -7,7 +7,9 @@ SERVICE_LOG_FILE_PATH = os.path.join(os.path.dirname(__file__), "../service_logs
 log_lock = threading.Lock()  # 파일 접근 동시성을 위한 Lock 객체
 
 def initialize_log_file(log_path):
-    """로그 파일이 없을 경우 초기화"""
+    """
+    로그 파일이 없을 경우 초기화
+    """
     if not os.path.exists(log_path):
         with log_lock:  # 파일 쓰기 작업에 Lock 적용
             with open(log_path, "w") as log_file:
@@ -59,3 +61,31 @@ def add_service_log(entry):
 
     with open(SERVICE_LOG_FILE_PATH, "w") as log_file:
         json.dump(logs, log_file, indent=4, separators=(",", ": "))
+
+def get_scan_logs():
+    """
+    scan_logs.json에서 모든 스캔 기록을 반환
+    :return: 스캔 기록 리스트
+    """
+    initialize_log_file(LOG_FILE_PATH)
+    try:
+        with log_lock:  # 파일 읽기 작업 보호
+            with open(LOG_FILE_PATH, "r") as log_file:
+                logs = json.load(log_file)
+    except json.JSONDecodeError:
+        logs = []
+    return logs
+
+def get_service_logs():
+    """
+    service_logs.json에서 모든 서비스/OS 탐지 기록을 반환
+    :return: 서비스/OS 탐지 기록 리스트
+    """
+    initialize_log_file(SERVICE_LOG_FILE_PATH)
+    try:
+        with log_lock:  # 파일 읽기 작업 보호
+            with open(SERVICE_LOG_FILE_PATH, "r") as log_file:
+                logs = json.load(log_file)
+    except json.JSONDecodeError:
+        logs = []
+    return logs

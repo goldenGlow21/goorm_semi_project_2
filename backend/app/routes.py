@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify, render_template
 from app.scanner import scan_ports
-from app.log_manager import add_scan_log, add_service_log, get_scan_logs
+from app.log_manager import add_scan_log, add_service_log, get_scan_logs, get_service_logs
 from datetime import datetime
 from modules.common import get_ip_from_domain
 import re
@@ -94,4 +94,12 @@ def logs():
     스캔 기록 반환
     """
     logs = get_scan_logs()
+    return jsonify(logs)
+
+@bp.route("/service_logs", methods=["GET"])
+def service_logs():
+    """
+    서비스/OS 탐지 기록 반환
+    """
+    logs = get_service_logs()
     return jsonify(logs)
