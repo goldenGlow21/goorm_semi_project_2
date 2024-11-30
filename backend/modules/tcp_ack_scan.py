@@ -11,7 +11,7 @@ from concurrent.futures import ThreadPoolExecutor
 from multiprocessing import Pool, cpu_count
 from scapy.all import sr1, conf  # from scapy.all import IP, TCP, sr1, conf
 from scapy.layers.inet import IP, TCP, ICMP
-from common import get_available_port
+from modules.common import get_available_port
 
 LOCK = threading.Lock() # 뮤텍스 락
 CPU_CORES = cpu_count()
