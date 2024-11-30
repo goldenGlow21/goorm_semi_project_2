@@ -1,6 +1,8 @@
 import re
 import socket
 import time
+import requests
+from os import times_result
 from typing import Dict, Optional, List
 from multiprocessing import Pool, cpu_count
 
@@ -196,6 +198,33 @@ class ServiceScanner:
                 continue
 
         return None
+
+    def search_cves(self, cpe23, limit=10):
+        results = []
+        url = "https://cvedb.shodan.io/cves"
+        params = {
+            "cpe23": cpe23,
+            "sort_by_epss": "true",
+            "limit" : limit
+        }
+        response = requests.get(url, params=params)
+        if response.status_code != 200:
+            print(f"SEARCH CVES ERROR" + response.text)
+            return None
+        cves = response.json()
+        for cve in cves.get("cves"):
+            cve_id = cve.get("cve_id")
+            summary = cve.get("summary")
+            cvss = cve.get("cvss")
+            ranking_epss = cve.get("ranking_epss")
+            results.append({
+                "cve_id": cve_id,
+                "summary": summary,
+                "cvss": cvss,
+                "ranking_epss": ranking_epss
+            })
+        return results
+
 
 
 def main():
