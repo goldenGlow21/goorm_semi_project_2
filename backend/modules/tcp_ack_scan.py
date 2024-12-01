@@ -27,7 +27,7 @@ def ack_scan(target_ip, port):
     response = sr1(packet, timeout=1)
     if response is None:
         pass
-    elif response.haslayer(TCP) and response[TCP].flags == 0x4:  # SYN/ACK응답 == 포트 열림
+    elif response.haslayer(TCP) and response[TCP].flags == 0x4:
         return port
     time.sleep(0)  # 속도 조절 시 사용할 것
 
@@ -56,8 +56,8 @@ def hybrid_ack_scan(target_ip, start_port, end_port):
     random.shuffle(random_ports)
 
     # 멀티프로세싱: 포트 범위를 여러 그룹으로 분할
-    num_processes = cpu_count()
-    chunk_size = len(random_ports) // num_processes
+    num_processes = min(cpu_count(), len(random_ports))  # 프로세스 수는 최대 포트 수만큼
+    chunk_size = max(1, len(random_ports) // num_processes)
     port_chunks = [random_ports[i:i + chunk_size] for i in range(0, len(random_ports), chunk_size)]
 
     args = [(target_ip, chunk) for chunk in port_chunks]

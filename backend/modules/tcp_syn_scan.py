@@ -56,8 +56,8 @@ def hybrid_syn_scan(target_ip, start_port, end_port):
     random.shuffle(random_ports)
 
     # 멀티프로세싱: 포트 범위를 여러 그룹으로 분할
-    num_processes = cpu_count()
-    chunk_size = len(random_ports) // num_processes
+    num_processes = min(cpu_count(), len(random_ports))  # 프로세스 수는 최대 포트 수만큼
+    chunk_size = max(1, len(random_ports) // num_processes)
     port_chunks = [random_ports[i:i + chunk_size] for i in range(0, len(random_ports), chunk_size)]
 
     args = [(target_ip, chunk) for chunk in port_chunks]
