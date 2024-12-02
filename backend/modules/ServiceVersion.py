@@ -5,6 +5,8 @@ import requests
 from os import cpu_count
 from typing import Dict, Optional, List
 from concurrent.futures import ThreadPoolExecutor
+from tcp_connection_scan import hybrid_connection_scan
+
 
 
 
@@ -290,46 +292,50 @@ class ServiceScanner:
 
 
 def main():
-    try:
-        print("Service Version Scanner")
-        print("=" * 50)
+    import sys
 
-        TARGET_IP = "13.125.143.118"
-        TARGET_PORTS = [21, 22, 80, 443, 3306, 8000, 8080]
+    if len(sys.argv) < 4:
+        print("Usage: python ServiceVersion.py <target_ip> <start_port> <end_port>")
+        sys.exit(1)
 
-        parser = ServiceProbeParser('nmap-service-probes.txt')
-        scanner = ServiceScanner(parser)
+    target_ip = sys.argv[1]
+    start_port = int(sys.argv[2])
+    end_port = int(sys.argv[3])
 
-        print(f"\n대상 IP: {TARGET_IP}")
-        print(f"스캔할 포트: {TARGET_PORTS}")
-        print("\n스캔을 시작합니다...")
+    print(f"\n대상 IP: {target_ip}")
+    print(f"스캔할 포트 범위: {start_port} ~ {end_port}")
+    print("\n스캔을 시작합니다...")
 
-        start_time = time.time()
-        results = scanner.multi_threading_scan(TARGET_IP, TARGET_PORTS)
-        for result in results:
-            print(f"\n포트 {result['port']} 스캔 중...")
+    # TCP 연결 스캐닝 (열린 포트 확인)
+    open_ports = hybrid_connection_scan(target_ip, start_port, end_port)
 
+    if not open_ports:
+        print("\n열린 포트가 없습니다.")
+        return
 
+    print(f"\n열린 포트 목록: {open_ports}")
+
+    # Service Version Scanner 초기화
+    parser = ServiceProbeParser('nmap-service-probes.txt')
+    scanner = ServiceScanner(parser)
+
+    print("\n서비스 버전 정보를 가져옵니다...")
+    for port in open_ports:
+        print(f"\n포트 {port} 스캔 결과:")
+        result = scanner.scan_port(target_ip, port)
+        if result['state'] == 'open':
             print(f"상태: {result['state']}")
-            if result['state'] == 'open':
-                print(f"서비스: {result['service'] or '알 수 없음'}")
-                if result.get('version'):
-                    print(f"버전: {result['version']}")
-                if result.get('cves'):
-                    print(f"CVES: {result['cves']}")
-                if result.get('info'):
-                    print(f"추가 정보: {result['info']}")
-            elif result['state'] == 'error':
-                print(f"에러: {result.get('error', '알 수 없는 에러')}")
+            print(f"서비스: {result['service'] or '알 수 없음'}")
+            if result.get('version'):
+                print(f"버전: {result['version']}")
+            if result.get('cves'):
+                print(f"CVEs: {result['cves']}")
+            if result.get('info'):
+                print(f"추가 정보: {result['info']}")
+        else:
+            print(f"포트 {port}는 닫혀 있거나 서비스 정보를 가져올 수 없습니다.")
 
-        scan_time = time.time() - start_time
-        print(f"\n스캔 완료 (소요시간: {scan_time:.2f}초)")
-
-    except KeyboardInterrupt:
-        print("\n\n스캔이 사용자에 의해 중단되었습니다.")
-    except Exception as e:
-        print(f"\n오류가 발생했습니다: {str(e)}")
-
+    print("\n스캔 완료.")
 
 if __name__ == "__main__":
     main()
