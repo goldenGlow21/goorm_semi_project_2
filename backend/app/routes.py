@@ -59,6 +59,11 @@ def scan():
         if scan_type == "additional_info":
             # CVE 정보 포함 스캔 수행
             scan_results = scan_ports(target_ip, start_port, end_port, scan_type)
+            
+            # 공통 메타데이터 추가
+            scan_results["ip"] = target_ip
+            scan_results["scan_type"] = scan_type
+            scan_results["scan_time"] = datetime.utcnow().isoformat() + "Z"
 
             # 결과를 service_log.json에 기록
             for result in scan_results:
