@@ -37,8 +37,9 @@ def scan_ports(ip: str, start_port: int, end_port: int, scan_type: str):
     try:
         if scan_type == "additional_info":
             # ServiceVersion 모듈을 사용하여 스캔 수행
-            port_range = list(range(start_port, end_port + 1))
+            port_range = multi_connection_scan(ip, start_port, end_port)
             results = scan_function(ip, port_range)  # multi_threading_scan 호출
+            print(results)
             return results
         else:
             if scan_type == "tcp_fin":
