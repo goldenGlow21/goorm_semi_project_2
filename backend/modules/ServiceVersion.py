@@ -2,9 +2,10 @@ import re
 import socket
 import time
 import requests
-from os import times_result
+from os import cpu_count
 from typing import Dict, Optional, List
-from multiprocessing import Pool, cpu_count
+from concurrent.futures import ThreadPoolExecutor
+
 
 
 class ServiceProbeParser:
@@ -117,12 +118,12 @@ class ServiceScanner:
     def __init__(self, service_parser):
         self.parser = service_parser
 
-    # 멀티프로세싱
-    def multi_processing_scan(self, target_ip, ports):
-        num_processes = cpu_count()
-        with Pool(num_processes) as pool:
-            result = pool.starmap(self.scan_port, [(target_ip, port) for port in ports])
-        return result
+    def multi_threading_scan(self, target_ip, ports):
+        with ThreadPoolExecutor(max_workers=cpu_count() * 2) as executor:
+            # 멀티스레드 스캔 실행
+            results = list(executor.map(lambda port: self.scan_port(target_ip, port), ports))
+            print(results)
+        return results
 
     def scan_port(self, ip: str, port: int, timeout: float = 2) -> Dict:
         result = {
@@ -305,10 +306,10 @@ def main():
         print("\n스캔을 시작합니다...")
 
         start_time = time.time()
+        results = scanner.multi_threading_scan(TARGET_IP, TARGET_PORTS)
+        for result in results:
+            print(f"\n포트 {result['port']} 스캔 중...")
 
-        for port in TARGET_PORTS:
-            print(f"\n포트 {port} 스캔 중...")
-            result = scanner.scan_port(TARGET_IP, port)
 
             print(f"상태: {result['state']}")
             if result['state'] == 'open':
