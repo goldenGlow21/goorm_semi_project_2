@@ -22,7 +22,7 @@ SCAN_FUNCTIONS = {
     "xmas": multi_stealth_scan,
     "null": multi_stealth_scan,
     "ack": multi_ack_scan,
-    "additional_info": service_scanner.scan_port,
+    "additional_info": service_scanner.multi_threading_scan,
 }
 
 def scan_ports(ip: str, start_port: int, end_port: int, scan_type: str):
