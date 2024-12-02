@@ -56,26 +56,17 @@ def scan():
 
     # 스캔 수행
     try:
-        scan_results = scan_ports(target_ip, start_port, end_port, scan_type)
-
-        # 공통 메타데이터 추가
-        metadata = {
-            "ip": target_ip,
-            "scan_type": scan_type,
-            "scan_time": datetime.utcnow().isoformat() + "Z",
-        }
-
         if scan_type == "additional_info":
-            # JSON 데이터에 공통 메타데이터 추가
-            if isinstance(scan_results, list):
-                for result in scan_results:
-                    result.update(metadata)  # 각 결과 항목에 공통 메타데이터 추가
-                    add_service_log(result)  # 로그 파일 기록
-            else:
-                scan_results.update(metadata)
-                add_service_log(scan_results)  # 단일 결과 로그 기록
+            # CVE 정보 포함 스캔 수행
+            scan_results = scan_ports(target_ip, start_port, end_port, scan_type)
 
-            return jsonify(scan_results)  # 결과 반환
+            # 결과를 service_log.json에 기록
+            for result in scan_results:
+                add_service_log(result)
+
+            return jsonify(scan_results)
+
+        scan_results = scan_ports(target_ip, start_port, end_port, scan_type)
 
         # 반환 값이 리스트일 경우 처리
         if isinstance(scan_results, list):
@@ -84,7 +75,10 @@ def scan():
                 "total_ports_scanned": len(scan_results),  # 추가 정보: 스캔된 포트 개수
             }
 
-        scan_results.update(metadata)  # 일반 스캔 결과에 공통 메타데이터 추가
+        # 공통 메타데이터 추가
+        scan_results["ip"] = target_ip
+        scan_results["scan_type"] = scan_type
+        scan_results["scan_time"] = datetime.utcnow().isoformat() + "Z"
     except Exception as e:
         return jsonify({"error": f"Scan failed: {str(e)}"}), 500
 
