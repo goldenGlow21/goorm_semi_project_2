@@ -6,7 +6,10 @@ from os import cpu_count
 from typing import Dict, Optional, List
 from concurrent.futures import ThreadPoolExecutor
 from tcp_connection_scan import hybrid_connection_scan
+import warnings
 
+
+warnings.filterwarnings("ignore", category=DeprecationWarning)
 
 
 
