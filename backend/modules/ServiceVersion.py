@@ -122,7 +122,6 @@ class ServiceScanner:
         with ThreadPoolExecutor(max_workers=cpu_count() * 2) as executor:
             # 멀티스레드 스캔 실행
             results = list(executor.map(lambda port: self.scan_port(target_ip, port), ports))
-            print(results)
         return results
 
     def scan_port(self, ip: str, port: int, timeout: float = 2) -> Dict:
