@@ -100,7 +100,13 @@ const MainBoard = () => {
         const scanData = await response.json();
         setShowResult(true);
         setScanResult(scanData);
-        navigate("/scanResult", { state: { ...scanData, type: "scanResult" } });
+
+        // 데이터 구분 후 전달
+        if (scan_type === "additional_info") {
+          navigate("/scanResult", { state: { additional_info: scanData, type: "Additional Information" } });
+        } else {
+          navigate("/scanResult", { state: { ...scanData, type: "Basic Information" } });
+        }
       } else {
         throw new Error("Failed to fetch scan results.");
       }
@@ -144,7 +150,7 @@ const MainBoard = () => {
           sx={textFieldStyles}
         />
 
-        {/* Port 및 Shodan API 입력 필드 */}
+        {/* Port 입력 필드 */}
         <div>
           <TextField
             className="input-box"

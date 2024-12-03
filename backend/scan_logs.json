@@ -1456,5 +1456,33 @@
         "ip": "13.125.143.118",
         "scan_type": "tcp_fin",
         "scan_time": "2024-11-29T12:52:33.622862Z"
+    },
+    {
+        "ip": "13.125.143.118",
+        "open": [],
+        "open_or_filtered": [],
+        "scan_type": "tcp_fin",
+        "scan_time": "2024-11-30T08:41:49.999566Z"
+    },
+    {
+        "ip": "13.125.143.118",
+        "open": [],
+        "open_or_filtered": [],
+        "scan_type": "ack",
+        "scan_time": "2024-11-30T08:44:00.640993Z"
+    },
+    {
+        "ip": "13.125.143.118",
+        "open": [],
+        "open_or_filtered": [],
+        "scan_type": "tcp_fin",
+        "scan_time": "2024-12-02T02:39:59.555872Z"
+    },
+    {
+        "ip": "13.125.143.118",
+        "open": [],
+        "open_or_filtered": [],
+        "scan_type": "tcp_fin",
+        "scan_time": "2024-12-02T06:37:35.982100Z"
     }
 ]

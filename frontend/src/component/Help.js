@@ -37,10 +37,10 @@ const BasicHelpPopover = () => {
             <Typography sx={{ p: 2 }}>
                 옵션에 대한 설명입니다.
                     <ul>
-                        <li>취약점 탐지: Description for option 1</li>
-                        <li>침투 테스트: Description for option 2</li>
-                        <li>기타 옵션: Description for option 1</li>
-                        <li>속도 옵션: Description for option 1</li>
+                        <li>침투 테스트: 속도 중요</li>
+                        <li>취약점 탐지: 정확도 중요</li>
+                        <li>네트워크 분석: 상세한 설명</li>
+                        <li>추가 정보 확인: 포트의 서비스 정보, 버전, CVE 취약점</li>
                     </ul>
             </Typography>
           </Popover>

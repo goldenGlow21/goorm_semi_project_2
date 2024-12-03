@@ -225,6 +225,8 @@ body {
 .scan-result-container .content-wrapper .menu li {
   padding: 10px;
   margin: 5px 0;
+  margin-bottom: 10px;
+  font-size: 16px;
   cursor: pointer;
   border-radius: 5px;
   transition: background 0.3s;
@@ -249,7 +251,46 @@ body {
   margin-bottom: 20px;
 }
 
+/* 데이터가 없는 경우 텍스트 색상 */
+.scan-result-container .content-wrapper .content .empty {
+  color: #888888;
+}
 
+/* 섹션 간 여백 */
+.scan-result-container .content-wrapper .content ul li {
+  margin-bottom: 20px;
+}
+
+/* 추가 정보 전체 리스트 스타일 */
+.scan-result-container .content-wrapper .content .additional-info-list {
+  list-style-type: none;
+  padding: 0;
+  margin: 20px 0;
+}
+
+.additional-info-container {
+  margin: 20px;
+}
+
+.additional-info-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+}
+
+.additional-info-table th,
+.additional-info-table td {
+  border: 1px solid #ccc;
+  padding: 8px;
+  text-align: center;
+}
+
+.cve-details {
+  background-color: #f9f9f9;
+  padding: 10px;
+  border: 1px solid #ccc;
+  margin-top: 20px;
+}
 
 
 

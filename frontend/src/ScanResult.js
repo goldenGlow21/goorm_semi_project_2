@@ -4,7 +4,7 @@ import "./App.css";
 
 const ScanResult = () => {
   const location = useLocation();
-  const data = location.state || {};
+  const data = location.state || {};  // 다른 페이지에서 전달받은 데이터
 
   const defaultData = { 
     ip: "Unknown", 
@@ -16,81 +16,130 @@ const ScanResult = () => {
   };
 
   // 타입에 따라 데이터를 통일
-  const unifiedData = data.type === "scanResult" || data.type === "recentScan" 
-    ? { ...defaultData, ...data } 
-    : defaultData;
-
-  const [selectedMenu, setSelectedMenu] = useState("IP"); // 선택된 메뉴 상태
+  const unifiedData = data.type === "Additional Information"
+    ? { ...defaultData, ...data.additional_info, additional_info: data.additional_info.cves }
+    : { ...defaultData, ...data };
+  
+  const [selectedMenu, setSelectedMenu] = useState("Basic Information"); // 선택된 메뉴 상태
+  const [isOpenPortsVisible, setIsOpenPortsVisible] = useState(false);  // open_ports 펼치기/접기 상태
+  const [isOpenOrFilteredVisible, setIsOpenOrFilteredVisible] = useState(false); // open_or_filtered 펼치기/접기 상태
   const navigate = useNavigate();
+
+  const [expandedCves, setExpandedCves] = useState([]);
+
+  // 토글 함수: 특정 CVE의 확장 상태를 토글
+  const toggleCve = (index) => {
+    setExpandedCves((prevExpanded) => {
+      const updated = [...prevExpanded];
+      updated[index] = !updated[index];
+      return updated;
+    });
+  };
+
+  const toggleOpenPorts = () => setIsOpenPortsVisible(!isOpenPortsVisible);
+  const toggleOpenOrFiltered = () => setIsOpenOrFilteredVisible(!isOpenOrFilteredVisible);
+
+  const formatList = (list, isVisible, toggleVisibility) => {
+    if (!list || list.length === 0) return "[]";
+
+    // 리스트가 10개 이상일 경우
+    if (list.length > 10) {
+      return (
+        <>
+          <span>{isVisible ? `[${list.join(", ")}]` : `[${list.slice(0, 10).join(", ")}, ...]`}</span>
+          <button onClick={toggleVisibility} className="expand-button">
+            {isVisible ? "접기" : "펼치기"}
+          </button>
+        </>
+      );
+    }
+
+    return `[${list.join(", ")}]`;
+  };
 
   const renderContent = () => {
     switch (selectedMenu) {
-      case "IP":
+      case "Basic Information":
         return (
-          <li>
-            <strong>IP:</strong> {unifiedData.ip || "IP 데이터가 없습니다."}
-          </li>
+          <ul className="scan-result-container">
+            <li>
+              <strong>IP:</strong>
+              <span className={unifiedData.ip ? "" : "empty"}>
+                {unifiedData.ip || "Unknown"}
+              </span>
+            </li>
+            <li>
+              <strong>Open Ports:</strong>
+              <span>{formatList(unifiedData.open_ports, isOpenPortsVisible, toggleOpenPorts)}</span>
+            </li>
+            <li>
+              <strong>Open or Filtered Ports:</strong>
+              <span>{formatList(unifiedData.open_or_filtered, isOpenOrFilteredVisible, toggleOpenOrFiltered)}</span>
+            </li>
+            <li>
+              <strong>Scan Type:</strong>
+              <span className={unifiedData.scan_type ? "" : "empty"}>
+                {unifiedData.scan_type || "Unknown"}
+              </span>
+            </li>
+            <li>
+              <strong>Scan Time:</strong>
+              <span className={unifiedData.scan_time ? "" : "empty"}>
+                {unifiedData.scan_time || "Unknown"}
+              </span>
+            </li>
+          </ul>
         );
-
-      case "Open Ports":
-        return (
-          <li>
-            <strong>Open Ports:</strong>
-            <ul>
-              {unifiedData.open_ports && unifiedData.open_ports.length > 0 ? (
-                unifiedData.open_ports.map((port, index) => (
-                  <li key={index}>Port {port}</li>
-                ))
-              ) : (
-                <li>열린 포트가 없습니다.</li>
-              )}
-            </ul>
-          </li>
-        );
-
-      case "Open or Filtered Ports":
-        return (
-          <li>
-            <strong>Open or Filtered Ports:</strong>
-            <ul>
-              {unifiedData.open_or_filtered &&
-              unifiedData.open_or_filtered.length > 0 ? (
-                unifiedData.open_or_filtered.map((port, index) => (
-                  <li key={index}>Port {port}</li>
-                ))
-              ) : (
-                <li>열리거나 필터링된 포트가 없습니다.</li>
-              )}
-            </ul>
-          </li>
-        );
-
-      case "Scan Type":
-        return (
-          <li>
-            <strong>Scan Type:</strong> {unifiedData.scan_type || "스캔 타입 정보가 없습니다."}
-          </li>
-        );
-
-      case "Scan Time":
-        return (
-          <li>
-            <strong>Scan Time:</strong> {unifiedData.scan_time || "스캔 시간 정보가 없습니다."}
-          </li>
-        );
-
+  
       case "Additional Information":
         return (
-          <li>
-            <strong>Additional Information:</strong> {unifiedData.additional_info || "추가 정보가 없습니다."}
-          </li>
+          <div className="additional-info-container">
+            <h3>추가 정보</h3>
+            {unifiedData.additional_info && unifiedData.additional_info.length > 0 ? (
+              <ul>
+                {unifiedData.additional_info.map((info, index) => (
+                  <li key={index}>
+                    <strong>Port {info.port}:</strong>{" "}
+                    {info.service || "Unknown"}
+                    {info.cves && info.cves.length > 0 && (
+                      <ul>
+                        {info.cves.map((cve, cveIndex) => (
+                          <li key={cveIndex}>
+                            <button
+                              onClick={() => toggleCve(cveIndex)}
+                              style={{
+                                background: "none",
+                                border: "none",
+                                color: "blue",
+                                cursor: "pointer",
+                                textDecoration: "underline",
+                              }}
+                            >
+                              {expandedCves[cveIndex] ? "접기 ▲" : "펼치기 ▼"}
+                            </button>
+                            {expandedCves[cveIndex] && (
+                              <div style={{ marginLeft: "1rem" }}>
+                                <strong>{cve.cve_id}</strong> - {cve.summary}
+                              </div>
+                            )}
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <span>추가 정보가 없습니다.</span>
+            )}
+          </div>
         );
-
+  
       default:
-        return <li>메뉴를 선택하세요.</li>;
+        return null;
     }
-  }
-
+  };
+  
 
   return (
     <div className="scan-result-container">
@@ -112,22 +161,16 @@ const ScanResult = () => {
         <aside className="menu">
           <h2>스캔 결과 메뉴</h2>
           <ul>
-            <li className={selectedMenu === "IP" ? "active" : ""} onClick={() => setSelectedMenu("IP")}>
-              IP
+            <li
+              className={selectedMenu === "Basic Information" ? "active" : ""}
+              onClick={() => setSelectedMenu("Basic Information")}
+            >
+              기본 정보
             </li>
-            <li className={selectedMenu === "Open Ports" ? "active" : ""} onClick={() => setSelectedMenu("Open Ports")}>
-              열린 포트
-            </li>
-            <li className={selectedMenu === "Open or Filtered Ports" ? "active" : ""} onClick={() => setSelectedMenu("Open or Filtered Ports")}>
-              열리거나 필터링된 포트
-            </li>
-            <li className={selectedMenu === "Scan Type" ? "active" : ""} onClick={() => setSelectedMenu("Scan Type")}>
-              스캔 타입
-            </li>
-            <li className={selectedMenu === "Scan Time" ? "active" : ""} onClick={() => setSelectedMenu("Scan Time")}>
-              스캔 시간
-            </li>
-            <li className={selectedMenu === "Additional Info" ? "active" : ""} onClick={() => setSelectedMenu("Additional Information")}>
+            <li
+              className={selectedMenu === "Additional Information" ? "active" : ""}
+              onClick={() => setSelectedMenu("Additional Information")}
+            >
               추가 정보
             </li>
           </ul>
