@@ -24,6 +24,7 @@ const RecentScan = () => {
         const serviceLogsData = await serviceLogsResponse.json();
         // 데이터가 어떻게 표현되는지 확인, 시간, type 모두 제대로 할당하기
 
+
         console.log("서비스 데이터", serviceLogsData);
 
         const combined = [
