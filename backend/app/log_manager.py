@@ -50,6 +50,15 @@ def add_service_log(entry):
     """
     initialize_log_file(SERVICE_LOG_FILE_PATH)
 
+    # 로그 형식 변환
+    log_entry = {
+        "port": entry.get("port", []),
+        "service": entry.get("service", []),
+        "version": entry.get("cves", []),
+        "cves": entry.get("cves", []),
+        "info": entry.get("info", []),
+    }
+
     try:
         with log_lock:  # 파일 읽기/쓰기 작업 보호
             with open(SERVICE_LOG_FILE_PATH, "r") as log_file:
@@ -57,7 +66,7 @@ def add_service_log(entry):
     except json.JSONDecodeError:
         logs = []
 
-    logs.append(entry)
+    logs.append(log_entry)
 
     with open(SERVICE_LOG_FILE_PATH, "w") as log_file:
         json.dump(logs, log_file, indent=4, separators=(",", ": "))
