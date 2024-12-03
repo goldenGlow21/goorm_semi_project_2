@@ -34,8 +34,6 @@ const ScanResult = () => {
     }));
   };
 
-  console.log("unified", unifiedData);
-
   const toggleOpenPorts = () => setIsOpenPortsVisible(!isOpenPortsVisible);
   const toggleOpenOrFiltered = () => setIsOpenOrFilteredVisible(!isOpenOrFilteredVisible);
 

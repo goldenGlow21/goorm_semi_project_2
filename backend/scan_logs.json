@@ -5,5 +5,12 @@
         "open_or_filtered": [],
         "scan_type": "tcp_connect",
         "scan_time": "2024-12-03T06:17:56.711204Z"
+    },
+    {
+        "ip": "13.125.143.118",
+        "open": [],
+        "open_or_filtered": [],
+        "scan_type": "tcp_fin",
+        "scan_time": "2024-12-03T12:29:12.332820Z"
     }
 ]
