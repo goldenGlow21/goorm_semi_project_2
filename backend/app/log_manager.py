@@ -53,6 +53,7 @@ def add_service_log(entry):
     # 로그 형식 변환
     log_entry = {
         "ip": entry.get("ip"),
+        "scan_type": entry.get("scan_type"),
         "scan_time": entry.get("scan_time"),
         "cves": entry.get("cves"),
     }
