@@ -52,8 +52,8 @@ def add_service_log(entry):
 
     # 로그 형식 변환
     log_entry = {
-        "port": entry.get("port", []),
-        "service": entry.get("service", []),
+        "port": entry.get("port"),
+        "service": entry.get("service"),
         "version": entry.get("version"),
         "cves": entry.get("cves"),
         "info": entry.get("info"),

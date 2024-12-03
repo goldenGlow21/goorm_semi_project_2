@@ -69,8 +69,7 @@ def scan():
             scan_results["cves"] = scan_ports(target_ip, start_port, end_port, scan_type)
 
             # 결과를 service_log.json에 기록
-            for result in scan_results:
-                add_service_log(result)
+            add_service_log(scan_results)
 
             return jsonify(scan_results)
 
