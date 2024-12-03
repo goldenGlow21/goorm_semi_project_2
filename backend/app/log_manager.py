@@ -54,9 +54,9 @@ def add_service_log(entry):
     log_entry = {
         "port": entry.get("port", []),
         "service": entry.get("service", []),
-        "version": entry.get("cves", []),
-        "cves": entry.get("cves", []),
-        "info": entry.get("info", []),
+        "version": entry.get("version"),
+        "cves": entry.get("cves"),
+        "info": entry.get("info"),
     }
 
     try:
