@@ -2,10 +2,14 @@ import re
 import socket
 import time
 import requests
+import sys
+import os
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(file), '..')))
 from os import cpu_count
 from typing import Dict, Optional, List
 from concurrent.futures import ThreadPoolExecutor
-from tcp_connection_scan import hybrid_connection_scan
+from modules.tcp_connection_scan import hybrid_connection_scan
 import warnings
 
 
