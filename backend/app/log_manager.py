@@ -57,6 +57,7 @@ def add_service_log(entry):
         "version": entry.get("version"),
         "cves": entry.get("cves"),
         "info": entry.get("info"),
+        "scan_time": entry.get("scan_time"),
     }
 
     try:
