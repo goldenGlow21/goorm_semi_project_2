@@ -89,6 +89,6 @@ python run.py
 
 ## Miscellaneous
 
-> AWS / Tomcat / Apache / Shodan API / Nginx / Docker
+> Shodan API / Docker
 
 ---
