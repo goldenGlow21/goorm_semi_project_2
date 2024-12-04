@@ -207,7 +207,7 @@ const MainBoard = () => {
                 variant="contained"
                 onClick={(e) => handleCategoryClick(e, key)}
               >
-                {activeCategory === key ? `선택: ${scan_type || "없음"}` : category.label}
+                {activeCategory === key ? `현재 선택: ${scan_type || "없음"}` : category.label}
               </Button>
               <Menu
                 anchorEl={anchorEl}
