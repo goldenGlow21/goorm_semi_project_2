@@ -11,8 +11,8 @@ const categories = {
     label: "침투 테스트",
     options: [
       { id: "scan1", type: "tcp_fin", label: "TCP_FIN" },
-      { id: "scan2", type: "null", label: "NULL" },
-      { id: "scan3", type: "xmas", label: "XMAS" },
+      { id: "scan2", type: "null", label: "TCP_NULL" },
+      { id: "scan3", type: "xmas", label: "TCP_XMAS" },
     ],
   },
   category2: {
@@ -20,8 +20,8 @@ const categories = {
     options: [
       { id: "scan1", type: "tcp_connect", label: "TCP_CONNECT" },
       { id: "scan2", type: "tcp_fin", label: "TCP_FIN" },
-      { id: "scan3", type: "null", label: "NULL" },
-      { id: "scan4", type: "xmas", label: "XMAS" },
+      { id: "scan3", type: "null", label: "TCP_NULL" },
+      { id: "scan4", type: "xmas", label: "TCP_XMAS" },
     ],
   },
   category3: {
@@ -30,7 +30,7 @@ const categories = {
       { id: "scan1", type: "tcp_connect", label: "TCP_CONNECT" },
       { id: "scan2", type: "tcp_syn", label: "TCP_SYN" },
       { id: "scan3", type: "udp", label: "UDP" },
-      { id: "scan4", type: "ack", label: "ACK" },
+      { id: "scan4", type: "ack", label: "TCP_ACK" },
     ],
   },
   category4: {
