@@ -20,6 +20,8 @@ const ScanResult = () => {
       ? { ...defaultData, ...data.additional_info, additional_info: data.additional_info.cves }
       : { ...defaultData, ...data };
 
+  console.log("open ports", unifiedData.open_ports);
+
   const [selectedMenu, setSelectedMenu] = useState("Basic Information"); // 선택된 메뉴 상태
   const [isOpenPortsVisible, setIsOpenPortsVisible] = useState(false); // open_ports 펼치기/접기 상태
   const [isOpenOrFilteredVisible, setIsOpenOrFilteredVisible] = useState(false); // open_or_filtered 펼치기/접기 상태
@@ -37,20 +39,18 @@ const ScanResult = () => {
   };
 
   const formatList = (list, isVisible, toggleVisibility) => {
-    if (!list || list.length === 0) return "[]";
+    if (!list || list.length === 0) return "No Available Ports";
 
-    if (list.length > 10) {
-      return (
-        <>
-          <span>{isVisible ? `[${list.join(", ")}]` : `[${list.slice(0, 10).join(", ")}, ...]`}</span>
-          <button onClick={toggleVisibility} className="expand-button">
-            {isVisible ? "접기" : "펼치기"}
+    return (
+      <>
+        <span>{isVisible ? `[${list.join(", ")}]` : `[${list.slice(0, 10).join(", ")}, ...]`}</span>
+        {list.length > 10 && (
+          <button onClick={toggleVisibility} style={{ background: "none", border: "none", color: "white", cursor: "pointer", textDecoration: "underline", marginLeft: "10px" }}>
+            {isVisible ? "접기 ▲" : "펼치기 ▼"}
           </button>
-        </>
-      );
-    }
-
-    return `[${list.join(", ")}]`;
+        )}
+      </>
+    );
   };
 
   const renderContent = () => {
@@ -63,26 +63,66 @@ const ScanResult = () => {
               <span className={unifiedData.ip ? "" : "empty"}>{unifiedData.ip || "Unknown"}</span>
             </li>
             {(unifiedData.open_ports && unifiedData.open_ports.length > 0) ||
-(unifiedData.open_or_filtered && unifiedData.open_or_filtered.length > 0) ? (
-  <>
-    {unifiedData.open_ports && unifiedData.open_ports.length > 0 && (
-      <li>
-        <strong>Open Ports:</strong>
-        <span>{formatList(unifiedData.open_ports, isOpenPortsVisible, toggleOpenPorts)}</span>
-      </li>
-    )}
-    {unifiedData.open_or_filtered && unifiedData.open_or_filtered.length > 0 && (
-      <li>
-        <strong>Open or Filtered Ports:</strong>
-        <span>
-          {formatList(unifiedData.open_or_filtered, isOpenOrFilteredVisible, toggleOpenOrFiltered)}
-        </span>
-      </li>
-    )}
-  </>
-) : (
-  <li>No ports available</li>
-)}
+            (unifiedData.open_or_filtered && unifiedData.open_or_filtered.length > 0) ? (
+              <>
+                {
+                  unifiedData.open_ports && unifiedData.open_ports.length > 0 && (
+                    <li>
+                      <strong>Open Ports:</strong>
+                      <div>
+                        <button
+                          onClick={toggleOpenPorts}
+                          style={{
+                            background: "none",
+                            border: "none",
+                            color: "green",
+                            cursor: "pointer",
+                            textDecoration: "underline",
+                            marginLeft: "10px",
+                          }}
+                        >
+                          {isOpenPortsVisible ? "접기 ▲" : "펼치기 ▼"}
+                        </button>
+                        {isOpenPortsVisible && (
+                          <div style={{ marginTop: "10px", marginLeft:"10px", color: "green" }}>
+                            {formatList(unifiedData.open_ports, isOpenPortsVisible, toggleOpenPorts)}
+                          </div>
+                        )}
+                      </div>
+                    </li>
+                  )
+                }
+                {
+                  unifiedData.open_or_filtered && unifiedData.open_or_filtered.length > 0 && (
+                    <li>
+                    <strong>Open or Filtered Ports:</strong>
+                      <div>
+                        <button
+                          onClick={toggleOpenOrFiltered}
+                          style={{
+                            background: "none",
+                            border: "none",
+                            color: "green",
+                            cursor: "pointer",
+                            textDecoration: "underline",
+                            marginLeft: "10px",
+                          }}
+                        >
+                          {isOpenPortsVisible ? "접기 ▲" : "펼치기 ▼"}
+                        </button>
+                        {isOpenPortsVisible && (
+                          <div style={{ marginTop: "10px", marginLeft:"10px", color: "green" }}>
+                            {formatList(unifiedData.open_or_filtered, isOpenOrFilteredVisible, toggleOpenOrFiltered)}
+                          </div>
+                        )}
+                      </div>
+                    </li>
+                  )
+                }
+              </>
+            ) : (
+              <li>No ports available</li>
+            )}
 
             <li>
               <strong>Scan Type:</strong>
@@ -115,7 +155,7 @@ const ScanResult = () => {
                                 style={{
                                   background: "none",
                                   border: "none",
-                                  color: "blue",
+                                  color: "green",
                                   cursor: "pointer",
                                   textDecoration: "underline",
                                 }}

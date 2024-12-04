@@ -1,16 +1,40 @@
 [
     {
         "ip": "13.125.143.118",
-        "open": [],
-        "open_or_filtered": [],
-        "scan_type": "tcp_connect",
-        "scan_time": "2024-12-03T06:17:56.711204Z"
+        "scan_type": "tcp_fin",
+        "scan_time": "2024-12-04T04:18:08.917978Z",
+        "open_or_filtered": [
+            20,
+            21,
+            22,
+            23,
+            24,
+            25,
+            26,
+            27,
+            28,
+            29,
+            30
+        ]
     },
     {
         "ip": "13.125.143.118",
-        "open": [],
-        "open_or_filtered": [],
-        "scan_type": "tcp_fin",
-        "scan_time": "2024-12-03T12:29:12.332820Z"
+        "scan_type": "tcp_connect",
+        "scan_time": "2024-12-04T04:18:18.862297Z",
+        "open_ports": [
+            21,
+            22,
+            25
+        ]
+    },
+    {
+        "ip": "13.125.143.118",
+        "scan_type": "tcp_connect",
+        "scan_time": "2024-12-04T04:30:39.685056Z",
+        "open_ports": [
+            21,
+            22,
+            25
+        ]
     }
 ]

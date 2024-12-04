@@ -92,11 +92,7 @@ const RecentScan = () => {
         <TableContainer component={Paper} sx={{ marginBottom: 3 }}>
           <Table>
             <TableHead>
-              <TableRow 
-                sx={{
-                  backgroundColor: "white", // 헤더 행 배경 색상
-                }}
-              >
+              <TableRow >
                 <TableCell>IP</TableCell>
                 <TableCell>Open Ports</TableCell>
                 <TableCell>Open or Filtered</TableCell>
@@ -112,7 +108,7 @@ const RecentScan = () => {
                   sx={{ cursor: 'pointer' }}
                 >                  
                   <TableCell>{row.ip}</TableCell>
-                  <TableCell>{formatList(row.open, 5)}</TableCell>
+                  <TableCell>{formatList(row.open_ports, 5)}</TableCell>
                   <TableCell>{formatList(row.open_or_filtered, 5)}</TableCell>
                   <TableCell>{row.scan_type}</TableCell>
                   <TableCell>{new Date(row.scan_time).toLocaleString()}</TableCell>
