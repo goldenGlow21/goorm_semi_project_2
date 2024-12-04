@@ -22,14 +22,16 @@ This project is designed to perform network port scanning and service vulnerabil
 
 # Guide for Operation
 
-## Docker-compose.yml
+***Please choose and proceed with one of the two preferred methods: Option 1 or Option 2.***
+
+## 1. Docker-compose.yml
 
 ```bash
 docker-compose up # for Windows
 docker compose up # for MacOS
 ```
 
-## Front End
+## 2-1. Front End
 
 1. Navigate to the `frontend` directory:
 
@@ -51,7 +53,7 @@ npm start
 
 4. Access the application via `http://localhost:3000`
 
-## Back End
+## 2-2. Back End
 
 1. Navigate to the `backend` directory:
 
