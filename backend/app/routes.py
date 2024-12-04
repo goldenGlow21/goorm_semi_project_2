@@ -88,7 +88,7 @@ def scan():
                 "ip": target_ip,
                 "scan_type": scan_type,
                 "scan_time": datetime.utcnow().isoformat() + "Z",
-                "open": scan_results.get("port_list", []),
+                "open_ports": scan_results.get("port_list", []),
             }
 
         # 로그 기록
