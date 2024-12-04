@@ -16,8 +16,8 @@ const RecentScan = () => {
   const fetchAllData = async () => {
     try {
       const [logsResponse, serviceLogsResponse] = await Promise.all([
-        fetch("http://localhost:5000/logs"),
-        fetch("http://localhost:5000/service_logs"),
+        fetch("http://localhost:5001/logs"),
+        fetch("http://localhost:5001/service_logs"),
       ]);
 
       if (logsResponse.status === 200 && serviceLogsResponse.status === 200) {

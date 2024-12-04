@@ -87,7 +87,7 @@ const MainBoard = () => {
     };
 
     try {
-      const response = await fetch("http://localhost:5000/scan", {
+      const response = await fetch("http://localhost:5001/scan", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(userData),
