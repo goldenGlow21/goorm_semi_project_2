@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Table, TableHead, TableBody, TableCell, TableContainer, TableRow, Paper,
-          Typography, Box, Button, Pagination,} from "@mui/material";
+          Typography, Box, Button, Pagination, TableFooter } from "@mui/material";
 import { errorAlert } from "./component/Alert";
 
 const RecentScan = () => {
-  const [combinedData, setCombinedData] = useState([]);
-  const [error, setError] = useState(null);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage] = useState(20);
+  const [basicData, setBasicData] = useState([]);
+  const [additionalData, setAdditionalData] = useState([]);
+  const [basicPage, setBasicPage] = useState(1);
+  const [additionalPage, setAdditionalPage] = useState(1);
+  const rowsPerPage = 10; // Number of rows per page
   const navigate = useNavigate();
 
   // Logs와 Service Logs 데이터를 가져와 병합하는 함수
@@ -22,18 +23,9 @@ const RecentScan = () => {
       if (logsResponse.status === 200 && serviceLogsResponse.status === 200) {
         const logsData = await logsResponse.json();
         const serviceLogsData = await serviceLogsResponse.json();
-        // 데이터가 어떻게 표현되는지 확인, 시간, type 모두 제대로 할당하기
 
-
-        console.log("서비스 데이터", serviceLogsData);
-
-        const combined = [
-          ...logsData.map((item) => ({ ...item, type: "Basic Information" })),
-          ...serviceLogsData.map((item) => ({ ...item, type: "Additional Information" })),
-        ];
-
-        setCombinedData(combined);
-        setError(null);
+        setBasicData(logsData);
+        setAdditionalData(serviceLogsData);
       } else {
         throw new Error(
           `HTTP error! Logs: ${logsResponse.status}, Service Logs: ${serviceLogsResponse.status}`
@@ -41,7 +33,6 @@ const RecentScan = () => {
       }
     } catch (err) {
       console.error("Error fetching data:", err);
-      setError("데이터를 불러오는 중 오류가 발생했습니다.");
       errorAlert("데이터를 불러오는 중 오류가 발생했습니다.");
     }
   };
@@ -50,14 +41,12 @@ const RecentScan = () => {
     fetchAllData();
   }, []);
 
-  const handlePageChange = (event, value) => {
-    setCurrentPage(value);
+  const handleRowClick = (rowData) => {
+    navigate('/scanResult', { state: { ip: rowData.ip, 
+                                    scan_type: rowData.scan_type,
+                                    scan_time: rowData.scan_time,
+                                    additional_info: rowData.cves } });
   };
-
-  const currentData = combinedData.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
-  );
 
   const formatList = (list, maxLength) => {
     if (!Array.isArray(list) || list.length === 0) return "NULL";
@@ -66,19 +55,11 @@ const RecentScan = () => {
       : list.join(", ");
   };
 
-  const formatCVEs = (cves) => {
-    if (!Array.isArray(cves) || cves.length === 0) return "No CVEs";
-    return cves
-      .slice(0, 3) // 최대 3개까지만 표시
-      .map(
-        (cve) =>
-          `${cve.cve_id} (CVSS: ${cve.cvss || "N/A"}) - ${
-            cve.summary ? cve.summary.slice(0, 50) + "..." : "No summary"
-          }`
-      )
-      .join("\n");
-  };
+  // Page change handlers
+  const handleBasicPageChange = (event, value) => setBasicPage(value);
+  const handleAdditionalPageChange = (event, value) => setAdditionalPage(value);
 
+  
   return (
     <div className="scan-result-container">
       <header className="header">
@@ -107,78 +88,96 @@ const RecentScan = () => {
       <div className="divider"></div>
 
       <div className="table-container">
-        <h1>Logs</h1>
-        {error ? (
-          <Typography color="error">{error}</Typography>
-        ) : combinedData.length === 0 ? (
-          <Typography>No data available.</Typography>
-        ) : (
-          <TableContainer component={Paper}>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell>Type</TableCell>
-                  <TableCell>Date</TableCell>
-                  <TableCell>IP</TableCell>
-                  <TableCell>Open Ports</TableCell>
-                  <TableCell>Open or Filtered Ports</TableCell>
-                  <TableCell>Scan Type</TableCell>
-                  <TableCell>Detail Port Info</TableCell>
-                  <TableCell>State</TableCell>
-                  <TableCell>Service</TableCell>
-                  <TableCell>Version</TableCell>
-                  <TableCell>CPE</TableCell>
-                  <TableCell>Info</TableCell>
-                  <TableCell>CVEs</TableCell>
+        <Typography variant="h6">Basic Information</Typography>
+        <TableContainer component={Paper} sx={{ marginBottom: 3 }}>
+          <Table>
+            <TableHead>
+              <TableRow 
+                sx={{
+                  backgroundColor: "white", // 헤더 행 배경 색상
+                }}
+              >
+                <TableCell>IP</TableCell>
+                <TableCell>Open Ports</TableCell>
+                <TableCell>Open or Filtered</TableCell>
+                <TableCell>Scan Type</TableCell>
+                <TableCell>Scan Time</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {basicData.map((row, index) => (
+                <TableRow
+                  key={index}
+                  onClick={() => handleRowClick(row, "Basic Information")}
+                  sx={{ cursor: 'pointer' }}
+                >                  
+                  <TableCell>{row.ip}</TableCell>
+                  <TableCell>{formatList(row.open, 5)}</TableCell>
+                  <TableCell>{formatList(row.open_or_filtered, 5)}</TableCell>
+                  <TableCell>{row.scan_type}</TableCell>
+                  <TableCell>{new Date(row.scan_time).toLocaleString()}</TableCell>
                 </TableRow>
-              </TableHead>
-              <TableBody>
-                {currentData.map((data, index) => (
-                  <TableRow
-                    key={index}
-                    onClick={() =>
-                      navigate("/scanResult", {
-                        state: { ...data, type : data.type },
-                      })
-                    }
-                    style={{ cursor: "pointer" }}
-                  >
-                    <TableCell>{data.type}</TableCell>
-                    <TableCell>{data.scan_time || "NULL"}</TableCell>
-                    <TableCell>{data.ip || "NULL"}</TableCell>
-                    <TableCell>{formatList(data.open_ports, 10)}</TableCell>
-                    <TableCell>
-                      {formatList(data.open_or_filtered, 10)}
-                    </TableCell>
-                    <TableCell>{data.scan_type || "NULL"}</TableCell>
-                    <TableCell>{data.port || "NULL"}</TableCell>
-                    <TableCell>{data.state || "NULL"}</TableCell>
-                    <TableCell>{data.service || "NULL"}</TableCell>
-                    <TableCell>{data.version || "NULL"}</TableCell>
-                    <TableCell>{data.cpe || "NULL"}</TableCell>
-                    <TableCell>{data.info || "NULL"}</TableCell>
-                    <TableCell style={{ whiteSpace: "pre-wrap" }}>
-                      {Array.isArray(data.cves) ? formatCVEs(data.cves) : "NULL"}
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        )}
+              ))}
+            </TableBody>
+            <TableFooter>
+              <TableRow>
+                <TableCell colSpan={5} align="center">
+                  <Pagination
+                    count={Math.ceil(basicData.length / rowsPerPage)}
+                    page={basicPage}
+                    onChange={handleBasicPageChange}
+                    color="primary"
+                  />
+                </TableCell>
+              </TableRow>
+            </TableFooter>
+          </Table>
+        </TableContainer>
 
-        {combinedData.length > itemsPerPage && (
-          <Box sx={{ display: "flex", justifyContent: "center", marginTop: 2 }}>
-            <Pagination
-              count={Math.ceil(combinedData.length / itemsPerPage)}
-              page={currentPage}
-              onChange={handlePageChange}
-              color="primary"
-              variant="outlined"
-              shape="rounded"
-            />
-          </Box>
-        )}
+
+        <Typography variant="h6" sx={{ marginTop: 4 }}>
+          Additional Information
+        </Typography>
+        <TableContainer component={Paper} style={{ marginTop: '20px' }}>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell>IP 주소</TableCell>
+                <TableCell>스캔 타입</TableCell>
+                <TableCell>스캔 시간</TableCell>
+                <TableCell align="center">열린 포트 수</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {additionalData.map((item, index) => (
+                <TableRow
+                  key={index}
+                  hover
+                  onClick={() => handleRowClick(item)}
+                  style={{ cursor: 'pointer' }}
+                >
+                  <TableCell>{item.ip}</TableCell>
+                  <TableCell>{item.scan_type}</TableCell>
+                  <TableCell>{new Date(item.scan_time).toLocaleString()}</TableCell>
+                  <TableCell align="center">{item.cves?.length || 0}</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+            <TableFooter>
+              <TableRow>
+                <TableCell colSpan={4} align="center">
+                  <Pagination
+                    count={Math.ceil(additionalData.length / rowsPerPage)}
+                    page={additionalPage}
+                    onChange={handleAdditionalPageChange}
+                    color="secondary"
+                  />
+                </TableCell>
+              </TableRow>
+            </TableFooter>
+          </Table>
+        </TableContainer>
+
       </div>
     </div>
   );

@@ -11,8 +11,8 @@ const categories = {
     label: "침투 테스트",
     options: [
       { id: "scan1", type: "tcp_fin", label: "TCP_FIN" },
-      { id: "scan2", type: "null", label: "NULL" },
-      { id: "scan3", type: "xmas", label: "XMAS" },
+      { id: "scan2", type: "null", label: "TCP_NULL" },
+      { id: "scan3", type: "xmas", label: "TCP_XMAS" },
     ],
   },
   category2: {
@@ -20,8 +20,8 @@ const categories = {
     options: [
       { id: "scan1", type: "tcp_connect", label: "TCP_CONNECT" },
       { id: "scan2", type: "tcp_fin", label: "TCP_FIN" },
-      { id: "scan3", type: "null", label: "NULL" },
-      { id: "scan4", type: "xmas", label: "XMAS" },
+      { id: "scan3", type: "null", label: "TCP_NULL" },
+      { id: "scan4", type: "xmas", label: "TCP_XMAS" },
     ],
   },
   category3: {
@@ -30,7 +30,7 @@ const categories = {
       { id: "scan1", type: "tcp_connect", label: "TCP_CONNECT" },
       { id: "scan2", type: "tcp_syn", label: "TCP_SYN" },
       { id: "scan3", type: "udp", label: "UDP" },
-      { id: "scan4", type: "ack", label: "ACK" },
+      { id: "scan4", type: "ack", label: "TCP_ACK" },
     ],
   },
   category4: {
@@ -120,7 +120,7 @@ const MainBoard = () => {
   // 공통 스타일
   const textFieldStyles = {
     "& .MuiOutlinedInput-root": {
-      "& fieldset": { borderColor: "blue" },
+      "& fieldset": { borderColor: "white" },
       "&:hover fieldset": { borderColor: "green" },
       "&.Mui-focused fieldset": { borderColor: "red" },
     },
@@ -147,7 +147,16 @@ const MainBoard = () => {
           type="text"
           placeholder="IP, 도메인을 입력하세요."
           onChange={(e) => setTargetIP(e.target.value)}
-          sx={textFieldStyles}
+          sx={{
+            ...textFieldStyles,
+            "& .MuiInputBase-input": {
+              color: "white"
+            },
+            "& input::placeholder": {
+              color: "gray",
+              opacity: 1,
+            },
+          }}
         />
 
         {/* Port 입력 필드 */}
@@ -159,7 +168,16 @@ const MainBoard = () => {
             value={target_start_port}
             onChange={(e) => setTargetStartPort(e.target.value)}
             style={{ marginRight: "10px" }}
-            sx={textFieldStyles}
+            sx={{
+              ...textFieldStyles,
+              "& .MuiInputBase-input": {
+                color: "white"
+              },
+              "& input::placeholder": {
+                color: "gray",
+                opacity: 1,
+              },
+            }}
           />
           <TextField
             className="input-box"
@@ -167,8 +185,17 @@ const MainBoard = () => {
             placeholder="End Port"
             value={target_end_port}
             onChange={(e) => setTargetEndPort(e.target.value)}
-            sx={textFieldStyles}
-          />
+            sx={{
+              ...textFieldStyles,
+              "& .MuiInputBase-input": {
+                color: "white"
+              },
+              "& input::placeholder": {
+                color: "gray",
+                opacity: 1,
+              },
+            }}
+        />
         </div>
 
         {/* 스캔 옵션 */}
@@ -180,7 +207,7 @@ const MainBoard = () => {
                 variant="contained"
                 onClick={(e) => handleCategoryClick(e, key)}
               >
-                {activeCategory === key ? `선택: ${scan_type || "없음"}` : category.label}
+                {activeCategory === key ? `현재 선택: ${scan_type || "없음"}` : category.label}
               </Button>
               <Menu
                 anchorEl={anchorEl}
