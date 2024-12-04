@@ -92,7 +92,11 @@ const RecentScan = () => {
         <TableContainer component={Paper} sx={{ marginBottom: 3 }}>
           <Table>
             <TableHead>
-              <TableRow>
+              <TableRow 
+                sx={{
+                  backgroundColor: "white", // 헤더 행 배경 색상
+                }}
+              >
                 <TableCell>IP</TableCell>
                 <TableCell>Open Ports</TableCell>
                 <TableCell>Open or Filtered</TableCell>
@@ -117,7 +121,7 @@ const RecentScan = () => {
             </TableBody>
             <TableFooter>
               <TableRow>
-                <TableCell colSpan={4} align="center">
+                <TableCell colSpan={5} align="center">
                   <Pagination
                     count={Math.ceil(basicData.length / rowsPerPage)}
                     page={basicPage}

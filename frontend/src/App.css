@@ -300,6 +300,7 @@ body {
 .scan-result-container .table-container {
   margin-top: 20px;
   margin-left: 50px;
+  background-color: white; /* 테이블 컨테이너 배경을 흰색으로 설정 */
 }
 
 .scan-result-container .table-container .table {
@@ -307,6 +308,7 @@ body {
   border-collapse: collapse;
   margin-top: 10px;
   color: #fff;
+  background-color: #fff;
 }
 
 .table-container th,
@@ -314,10 +316,11 @@ body {
   border: 1px solid #444;
   padding: 8px;
   text-align: left;
+  background-color: #fff;
 }
 
 .table-container th {
-  background-color: #333;
+  background-color: #2a2a2a;
 }
 
 .table-container tr:nth-child(even) {
