@@ -45,6 +45,8 @@ const RecentScan = () => {
     navigate('/scanResult', { state: { ip: rowData.ip, 
                                     scan_type: rowData.scan_type,
                                     scan_time: rowData.scan_time,
+                                    open_ports: rowData.open_ports,
+                                    open_or_filtered: rowData.open_or_filtered,
                                     additional_info: rowData.cves } });
   };
 

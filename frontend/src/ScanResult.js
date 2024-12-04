@@ -6,6 +6,8 @@ const ScanResult = () => {
   const location = useLocation();
   const data = location.state || {}; // 다른 페이지에서 전달받은 데이터
 
+  console.log("data", data);
+
   const defaultData = {
     ip: "Unknown",
     open_ports: [],
