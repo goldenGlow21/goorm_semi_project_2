@@ -147,7 +147,13 @@ const MainBoard = () => {
           type="text"
           placeholder="IP, 도메인을 입력하세요."
           onChange={(e) => setTargetIP(e.target.value)}
-          sx={textFieldStyles}
+          sx={{
+            ...textFieldStyles,
+            "& input::placeholder": {
+              color: "gray",
+              opacity: 1,
+            },
+          }}
         />
 
         {/* Port 입력 필드 */}
@@ -159,7 +165,13 @@ const MainBoard = () => {
             value={target_start_port}
             onChange={(e) => setTargetStartPort(e.target.value)}
             style={{ marginRight: "10px" }}
-            sx={textFieldStyles}
+            sx={{
+              ...textFieldStyles,
+              "& input::placeholder": {
+                color: "gray",
+                opacity: 1,
+              },
+            }}
           />
           <TextField
             className="input-box"
@@ -167,8 +179,14 @@ const MainBoard = () => {
             placeholder="End Port"
             value={target_end_port}
             onChange={(e) => setTargetEndPort(e.target.value)}
-            sx={textFieldStyles}
-          />
+            sx={{
+              ...textFieldStyles,
+              "& input::placeholder": {
+                color: "gray",
+                opacity: 1,
+              },
+            }}
+        />
         </div>
 
         {/* 스캔 옵션 */}

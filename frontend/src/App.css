@@ -24,7 +24,6 @@ body {
 }
 
 /* 이 위까지 기본 헤더 설정 */
-
 .container .header .recent-scan-button {
   background-color: #0073e6;
   color: white;
@@ -50,6 +49,7 @@ body {
   margin: 20px 0;
   font-size: 16px;
 }
+
 
 .container .main-content .options {
   display: flex;
