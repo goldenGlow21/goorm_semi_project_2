@@ -40,19 +40,10 @@ const ScanResult = () => {
     }));
   };
 
-  const formatList = (list, isVisible, toggleVisibility) => {
-    if (!list || list.length === 0) return "No Available Ports";
-
-    return (
-      <>
-        <span>{isVisible ? `[${list.join(", ")}]` : `[${list.slice(0, 10).join(", ")}, ...]`}</span>
-        {list.length > 10 && (
-          <button onClick={toggleVisibility} style={{ background: "none", border: "none", color: "white", cursor: "pointer", textDecoration: "underline", marginLeft: "10px" }}>
-            {isVisible ? "접기 ▲" : "펼치기 ▼"}
-          </button>
-        )}
-      </>
-    );
+  const formatList = (list, isVisible) => {
+    if (!list || list.length === 0) return "[]";
+  
+    return isVisible ? `[${list.join(", ")}]` : `[${list.slice(0, 10).join(", ")}, ...]`;
   };
 
   const renderContent = () => {
@@ -87,7 +78,7 @@ const ScanResult = () => {
                         </button>
                         {isOpenPortsVisible && (
                           <div style={{ marginTop: "10px", marginLeft:"10px", color: "green" }}>
-                            {formatList(unifiedData.open_ports, isOpenPortsVisible, toggleOpenPorts)}
+                            {formatList(unifiedData.open_ports, isOpenPortsVisible)}
                           </div>
                         )}
                       </div>
@@ -97,7 +88,7 @@ const ScanResult = () => {
                 {
                   unifiedData.open_or_filtered && unifiedData.open_or_filtered.length > 0 && (
                     <li>
-                    <strong>Open or Filtered Ports:</strong>
+                      <strong>Open or Filtered Ports:</strong>
                       <div>
                         <button
                           onClick={toggleOpenOrFiltered}
@@ -110,11 +101,11 @@ const ScanResult = () => {
                             marginLeft: "10px",
                           }}
                         >
-                          {isOpenPortsVisible ? "접기 ▲" : "펼치기 ▼"}
+                          {isOpenOrFilteredVisible ? "접기 ▲" : "펼치기 ▼"}
                         </button>
-                        {isOpenPortsVisible && (
+                        {isOpenOrFilteredVisible && (
                           <div style={{ marginTop: "10px", marginLeft:"10px", color: "green" }}>
-                            {formatList(unifiedData.open_or_filtered, isOpenOrFilteredVisible, toggleOpenOrFiltered)}
+                            {formatList(unifiedData.open_or_filtered, isOpenOrFilteredVisible)}
                           </div>
                         )}
                       </div>
