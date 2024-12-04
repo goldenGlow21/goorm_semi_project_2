@@ -22,15 +22,6 @@ def add_scan_log(entry):
     """
     initialize_log_file(LOG_FILE_PATH)
 
-    # 로그 형식 변환
-    log_entry = {
-        "ip": entry.get("ip"),
-        "scan_type": entry.get("scan_type"),
-        "scan_time": entry.get("scan_time"),
-        "open": entry.get("open", []),
-        "open_or_filtered": entry.get("open_or_filtered", []),
-    }
-
     try:
         with log_lock:  # 파일 읽기/쓰기 작업 보호
             with open(LOG_FILE_PATH, "r") as log_file:
@@ -38,7 +29,7 @@ def add_scan_log(entry):
     except json.JSONDecodeError:
         logs = []
 
-    logs.append(log_entry)
+    logs.append(entry)
 
     with open(LOG_FILE_PATH, "w") as log_file:
         json.dump(logs, log_file, indent=4, separators=(",", ": "))
