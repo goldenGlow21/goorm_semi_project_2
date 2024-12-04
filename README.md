@@ -18,6 +18,8 @@ This project is designed to perform network port scanning and service vulnerabil
 
 **Accuracy Considerations**: Techniques like Stealth Scanning may yield inconsistent results depending on the target's configuration. The accuracy of the scan is not always guaranteed and should be interpreted cautiously.
 
+**Legal Disclaimer**: Port scanning must be conducted in a lawful manner and should only target systems for which prior notification and authorization have been obtained. This tool is intended for educational and practical learning purposes, not for any illegal or malicious activities. We disclaim any responsibility for the consequences of misuse or irresponsible actions by users who disregard this warning.
+
 ---
 
 # Guide for Operation
