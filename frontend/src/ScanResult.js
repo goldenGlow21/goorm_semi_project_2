@@ -62,16 +62,28 @@ const ScanResult = () => {
               <strong>IP:</strong>
               <span className={unifiedData.ip ? "" : "empty"}>{unifiedData.ip || "Unknown"}</span>
             </li>
-            <li>
-              <strong>Open Ports:</strong>
-              <span>{formatList(unifiedData.open_ports, isOpenPortsVisible, toggleOpenPorts)}</span>
-            </li>
-            <li>
-              <strong>Open or Filtered Ports:</strong>
-              <span>
-                {formatList(unifiedData.open_or_filtered, isOpenOrFilteredVisible, toggleOpenOrFiltered)}
-              </span>
-            </li>
+            {(unifiedData.open_ports && unifiedData.open_ports.length > 0) ||
+(unifiedData.open_or_filtered && unifiedData.open_or_filtered.length > 0) ? (
+  <>
+    {unifiedData.open_ports && unifiedData.open_ports.length > 0 && (
+      <li>
+        <strong>Open Ports:</strong>
+        <span>{formatList(unifiedData.open_ports, isOpenPortsVisible, toggleOpenPorts)}</span>
+      </li>
+    )}
+    {unifiedData.open_or_filtered && unifiedData.open_or_filtered.length > 0 && (
+      <li>
+        <strong>Open or Filtered Ports:</strong>
+        <span>
+          {formatList(unifiedData.open_or_filtered, isOpenOrFilteredVisible, toggleOpenOrFiltered)}
+        </span>
+      </li>
+    )}
+  </>
+) : (
+  <li>No ports available</li>
+)}
+
             <li>
               <strong>Scan Type:</strong>
               <span className={unifiedData.scan_type ? "" : "empty"}>{unifiedData.scan_type || "Unknown"}</span>
