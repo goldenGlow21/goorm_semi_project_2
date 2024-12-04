@@ -6,8 +6,6 @@ const ScanResult = () => {
   const location = useLocation();
   const data = location.state || {}; // 다른 페이지에서 전달받은 데이터
 
-  console.log("data", data);
-
   const defaultData = {
     ip: "Unknown",
     open_ports: [],
@@ -21,8 +19,6 @@ const ScanResult = () => {
     data.type === "Additional Information"
       ? { ...defaultData, ...data.additional_info, additional_info: data.additional_info.cves }
       : { ...defaultData, ...data };
-
-  console.log("open ports", unifiedData.open_ports);
 
   const [selectedMenu, setSelectedMenu] = useState("Basic Information"); // 선택된 메뉴 상태
   const [isOpenPortsVisible, setIsOpenPortsVisible] = useState(false); // open_ports 펼치기/접기 상태
