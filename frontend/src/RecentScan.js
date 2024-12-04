@@ -41,10 +41,7 @@ const RecentScan = () => {
     fetchAllData();
   }, []);
 
-
-
   const handleRowClick = (rowData) => {
-    console.log("rowData",rowData)
     navigate('/scanResult', { state: { ip: rowData.ip, 
                                     scan_type: rowData.scan_type,
                                     scan_time: rowData.scan_time,

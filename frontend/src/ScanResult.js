@@ -26,6 +26,8 @@ const ScanResult = () => {
   const [expandedCves, setExpandedCves] = useState({}); // 포트와 CVE 상태 관리
   const navigate = useNavigate();
 
+  const toggleOpenPorts = () => setIsOpenPortsVisible(!isOpenPortsVisible);
+  const toggleOpenOrFiltered = () => setIsOpenOrFilteredVisible(!isOpenOrFilteredVisible);
   const toggleCve = (portIndex, cveIndex) => {
     const key = `${portIndex}-${cveIndex}`;
     setExpandedCves((prev) => ({
@@ -33,9 +35,6 @@ const ScanResult = () => {
       [key]: !prev[key],
     }));
   };
-
-  const toggleOpenPorts = () => setIsOpenPortsVisible(!isOpenPortsVisible);
-  const toggleOpenOrFiltered = () => setIsOpenOrFilteredVisible(!isOpenOrFilteredVisible);
 
   const formatList = (list, isVisible, toggleVisibility) => {
     if (!list || list.length === 0) return "[]";
