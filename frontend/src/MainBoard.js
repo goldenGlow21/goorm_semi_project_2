@@ -120,7 +120,7 @@ const MainBoard = () => {
   // 공통 스타일
   const textFieldStyles = {
     "& .MuiOutlinedInput-root": {
-      "& fieldset": { borderColor: "blue" },
+      "& fieldset": { borderColor: "white" },
       "&:hover fieldset": { borderColor: "green" },
       "&.Mui-focused fieldset": { borderColor: "red" },
     },
@@ -149,6 +149,9 @@ const MainBoard = () => {
           onChange={(e) => setTargetIP(e.target.value)}
           sx={{
             ...textFieldStyles,
+            "& .MuiInputBase-input": {
+              color: "white"
+            },
             "& input::placeholder": {
               color: "gray",
               opacity: 1,
@@ -167,6 +170,9 @@ const MainBoard = () => {
             style={{ marginRight: "10px" }}
             sx={{
               ...textFieldStyles,
+              "& .MuiInputBase-input": {
+                color: "white"
+              },
               "& input::placeholder": {
                 color: "gray",
                 opacity: 1,
@@ -181,6 +187,9 @@ const MainBoard = () => {
             onChange={(e) => setTargetEndPort(e.target.value)}
             sx={{
               ...textFieldStyles,
+              "& .MuiInputBase-input": {
+                color: "white"
+              },
               "& input::placeholder": {
                 color: "gray",
                 opacity: 1,
