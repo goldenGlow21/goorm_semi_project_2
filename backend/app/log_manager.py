@@ -25,10 +25,10 @@ def add_scan_log(entry):
     # 로그 형식 변환
     log_entry = {
         "ip": entry.get("ip"),
-        "open": entry.get("open", []),
-        "open_or_filtered": entry.get("open_or_filtered", []),
         "scan_type": entry.get("scan_type"),
         "scan_time": entry.get("scan_time"),
+        "open": entry.get("open", []),
+        "open_or_filtered": entry.get("open_or_filtered", []),
     }
 
     try:

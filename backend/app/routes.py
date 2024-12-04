@@ -73,16 +73,26 @@ def scan():
 
             return jsonify(scan_results)
 
-        scan_results = {}
+        scan_results = scan_ports(target_ip, start_port, end_port, scan_type)
 
-        # 공통 메타데이터 추가
-        scan_results["ip"] = target_ip
-        scan_results["scan_type"] = scan_type
-        scan_results["scan_time"] = datetime.utcnow().isoformat() + "Z"
-        scan_results["ports"] = scan_ports(target_ip, start_port, end_port, scan_type)
+        # 스캔 결과를 구성
+        if scan_type in ["udp", "tcp_fin", "xmas", "null"]:
+            result = {
+                "ip": target_ip,
+                "scan_type": scan_type,
+                "scan_time": datetime.utcnow().isoformat() + "Z",
+                "open_or_filtered": scan_results.get("open_or_filtred", []),
+            }
+        else:
+            result = {
+                "ip": target_ip,
+                "scan_type": scan_type,
+                "scan_time": datetime.utcnow().isoformat() + "Z",
+                "open": scan_results.get("open", []),
+            }
 
-        # 결과 기록
-        add_scan_log(scan_results)
+        # 로그 기록
+        add_scan_log(result)
 
     except Exception as e:
         return jsonify({"error": f"Scan failed: {str(e)}"}), 500
