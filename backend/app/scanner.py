@@ -52,7 +52,7 @@ def scan_ports(ip: str, start_port: int, end_port: int, scan_type: str):
 
             # 리스트를 딕셔너리로 변환
             if isinstance(results, list):
-                return {"open_or_filtered": results}  # 포트 리스트
+                return {"port_list": results}  # 포트 리스트
             else:
                 # 예외적인 반환값 처리
                 raise RuntimeError("Unexpected result format from scan function")

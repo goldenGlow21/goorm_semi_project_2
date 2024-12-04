@@ -81,14 +81,14 @@ def scan():
                 "ip": target_ip,
                 "scan_type": scan_type,
                 "scan_time": datetime.utcnow().isoformat() + "Z",
-                "open_or_filtered": scan_results.get("open_or_filtred", []),
+                "open_or_filtered": scan_results.get("port_list", []),
             }
         else:
             result = {
                 "ip": target_ip,
                 "scan_type": scan_type,
                 "scan_time": datetime.utcnow().isoformat() + "Z",
-                "open": scan_results.get("open", []),
+                "open": scan_results.get("port_list", []),
             }
 
         # 로그 기록
