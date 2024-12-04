@@ -24,8 +24,10 @@ This project is designed to perform network port scanning and service vulnerabil
 
 ## Docker-compose.yml
 
-1. docker-compose up // for Windows
-2. docker compose up // for MacOS
+```bash
+docker-compose up # for Windows
+docker compose up # for MacOS
+```
 
 ## Front End
 
