@@ -296,11 +296,11 @@ body {
 
 /* 아래부턴 Recent Scan */
 
-/* 테이블 스타일 /
+/* 테이블 스타일 */
 .scan-result-container .table-container {
   margin-top: 20px;
   margin-left: 50px;
-  background-color: white; / 테이블 컨테이너 배경을 흰색으로 설정 /
+  background-color: white; /* 테이블 컨테이너 배경을 흰색으로 설정 */
 }
 
 .scan-result-container .table-container .table {
@@ -313,25 +313,25 @@ body {
 
 .table-container th,
 .table-container td {
-  border: 1px solid #fff;
+  border: 1px solid #444;
   padding: 8px;
   text-align: left;
   background-color: #fff;
 }
 
 .table-container th {
-  background-color: #fff;
+  background-color: #2a2a2a;
 }
 
 .table-container tr:nth-child(even) {
-  background-color: #fff;
+  background-color: #2a2a2a;
 }
 
 .table-container tr:hover {
-  background-color: #fff;
+  background-color: #3a3a3a;
 }
 
-/ 메시지 스타일 */
+/* 메시지 스타일 */
 .no-data-message {
   margin-top: 20px;
   font-size: 16px;
