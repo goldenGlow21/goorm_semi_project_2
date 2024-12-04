@@ -98,7 +98,7 @@ def scan():
         return jsonify({"error": f"Scan failed: {str(e)}"}), 500
 
     # 응답 반환
-    return jsonify(scan_results)
+    return jsonify(result)
 
 @bp.route("/logs", methods=["GET"])
 def logs():
