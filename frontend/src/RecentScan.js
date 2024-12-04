@@ -141,7 +141,7 @@ const RecentScan = () => {
                 <TableCell>IP 주소</TableCell>
                 <TableCell>스캔 타입</TableCell>
                 <TableCell>스캔 시간</TableCell>
-                <TableCell align="center">CVEs 수</TableCell>
+                <TableCell align="center">열린 포트 수</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
